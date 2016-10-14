@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">{-|
+Description : Syntax and model checking for CTL.
+
+Maintainer  : Guilherme G. Azzi &lt;ggazzi@inf.ufrgs.br&gt;
+Stability   : provisional
+-}</span><span>
+</span><a name="line-7"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Logic</span><span class="hs-operator">.</span><span class="hs-identifier">Ctl</span><span>
+</span><a name="line-8"></a><span>  </span><span class="hs-special">(</span><span>
+</span><a name="line-9"></a><span>  </span><span class="hs-comment">-- * CTL Expressions</span><span>
+</span><a name="line-10"></a><span>    </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Logic</span><span class="hs-operator">.</span><span class="hs-identifier">Ctl</span><span class="hs-operator">.</span><span class="hs-identifier">Base</span><span>
+</span><a name="line-11"></a><span>  </span><span class="hs-special">,</span><span> </span><a href="Logic.Ctl.Parser.html#parseExpr"><span class="hs-identifier hs-var">parseExpr</span></a><span>
+</span><a name="line-12"></a><span>
+</span><a name="line-13"></a><span>  </span><span class="hs-comment">-- * Model checking</span><span>
+</span><a name="line-14"></a><span>  </span><span class="hs-special">,</span><span> </span><a href="Logic.Ctl.html#check"><span class="hs-identifier hs-var">check</span></a><span>
+</span><a name="line-15"></a><span>  </span><span class="hs-special">,</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Logic</span><span class="hs-operator">.</span><span class="hs-identifier">Ctl</span><span class="hs-operator">.</span><span class="hs-identifier">Semantics</span><span>
+</span><a name="line-16"></a><span>  </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><a name="line-17"></a><span>
+</span><a name="line-18"></a><span>
+</span><a name="line-19"></a><span class="hs-keyword">import</span><span>           </span><a href="Logic.Ctl.Base.html"><span class="hs-identifier">Logic</span><span class="hs-operator">.</span><span class="hs-identifier">Ctl</span><span class="hs-operator">.</span><span class="hs-identifier">Base</span></a><span>
+</span><a name="line-20"></a><span class="hs-keyword">import</span><span>           </span><a href="Logic.Ctl.Parser.html"><span class="hs-identifier">Logic</span><span class="hs-operator">.</span><span class="hs-identifier">Ctl</span><span class="hs-operator">.</span><span class="hs-identifier">Parser</span></a><span>
+</span><a name="line-21"></a><span class="hs-keyword">import</span><span>           </span><a href="Logic.Ctl.Semantics.html"><span class="hs-identifier">Logic</span><span class="hs-operator">.</span><span class="hs-identifier">Ctl</span><span class="hs-operator">.</span><span class="hs-identifier">Semantics</span></a><span>
+</span><a name="line-22"></a><span class="hs-keyword">import</span><span>           </span><a href="Logic.Model.html"><span class="hs-identifier">Logic</span><span class="hs-operator">.</span><span class="hs-identifier">Model</span></a><span>
+</span><a name="line-23"></a><span>
+</span><a name="line-24"></a><span>
+</span><a name="line-25"></a><span class="hs-comment">-- | Check if the given expression holds in the given state of the Kripke structure.</span><span>
+</span><a name="line-26"></a><span class="hs-identifier">check</span><span> </span><span class="hs-glyph">::</span><span> </span><a href="Logic.Model.html#KripkeStructure"><span class="hs-identifier hs-type">KripkeStructure</span></a><span> </span><span class="hs-identifier hs-type">String</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="Logic.Ctl.Base.html#Expr"><span class="hs-identifier hs-type">Expr</span></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-identifier hs-type">Int</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-identifier hs-type">Bool</span><span>
+</span><a name="line-27"></a><a name="check"><a href="Logic.Ctl.html#check"><span class="hs-identifier">check</span></a></a><span> </span><a name="local-1627455950"><a href="#local-1627455950"><span class="hs-identifier">model</span></a></a><span> </span><a name="local-1627455951"><a href="#local-1627455951"><span class="hs-identifier">expr</span></a></a><span> </span><a name="local-1627455952"><a href="#local-1627455952"><span class="hs-identifier">s0</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a href="#local-1627455952"><span class="hs-identifier hs-var">s0</span></a><span> </span><span class="hs-special">`</span><span class="hs-identifier hs-var">elem</span><span class="hs-special">`</span><span> </span><a href="Logic.Ctl.Semantics.html#satisfyExpr%27"><span class="hs-identifier hs-var">satisfyExpr'</span></a><span> </span><a href="#local-1627455950"><span class="hs-identifier hs-var">model</span></a><span> </span><a href="#local-1627455951"><span class="hs-identifier hs-var">expr</span></a><span>
+</span><a name="line-28"></a></pre></body></html>
