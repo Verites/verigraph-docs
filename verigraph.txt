@@ -6,70 +6,7 @@
 --   
 --   Software specification and verification tool based on graph rewriting.
 @package verigraph
-@version 1.0
-
-module Abstract.Relation
-
--- | Datatype for endorelations on a
-data Relation a
-
--- | An empty relation, with domain and codomain specified.
-empty :: Ord a => [a] -> [a] -> Relation a
-
--- | Compose <tt>r1</tt> and <tt>r2</tt>.
-compose :: (Ord a) => Relation a -> Relation a -> Relation a
-
--- | The identity relation on <tt>dom</tt>.
-id :: Ord a => [a] -> Relation a
-
--- | The inverse relation.
-inverseRelation :: (Ord a) => Relation a -> Relation a
-
--- | Add a mapping between <tt>x</tt> and <tt>y</tt> to the relation. If
---   <tt>x</tt> already exists, <tt>y</tt> is joined to the corresponding
---   elements.
-updateRelation :: Ord a => a -> a -> Relation a -> Relation a
-
--- | Remove an element from the domain of the relation
-removeFromDomain :: Ord a => a -> Relation a -> Relation a
-
--- | Remove an element from the codomain of the relation
-removeFromCodomain :: Ord a => a -> Relation a -> Relation a
-
--- | Insert an element on the codomain of the relation
-insertOnCodomain :: Ord a => a -> Relation a -> Relation a
-
--- | Return a list of all elements that <tt>x</tt> gets mapped into.
-apply :: (Ord a) => Relation a -> a -> [a]
-domain :: Relation a -> [a]
-codomain :: Relation a -> [a]
-
--- | Return a list of all elements in the image of the relation.
-image :: (Eq a) => Relation a -> [a]
-mapping :: Relation a -> Map a [a]
-
--- | Return the elements in the domain which are not in the image of the
---   relation (orphans)
-orphans :: (Eq a) => Relation a -> [a]
-
--- | Test if <tt>r</tt> is functional.
-isFunctional :: Relation a -> Bool
-
--- | Test if <tt>r</tt> is injective.
-isInjective :: (Ord a) => Relation a -> Bool
-
--- | Test if <tt>r</tt> is injective out of domain <tt>list</tt>
-isPartialInjective :: Ord a => [a] -> Relation a -> Bool
-
--- | Test if <tt>r</tt> is surjective.
-isSurjective :: (Ord a) => Relation a -> Bool
-
--- | Test if <tt>r</tt> is total.
-isTotal :: (Ord a) => Relation a -> Bool
-instance (GHC.Classes.Ord a, GHC.Read.Read a) => GHC.Read.Read (Abstract.Relation.Relation a)
-instance GHC.Show.Show a => GHC.Show.Show (Abstract.Relation.Relation a)
-instance GHC.Classes.Ord a => GHC.Classes.Ord (Abstract.Relation.Relation a)
-instance (GHC.Classes.Eq a, GHC.Classes.Ord a) => GHC.Classes.Eq (Abstract.Relation.Relation a)
+@version 1.1.0
 
 
 module Logic.Model
@@ -255,149 +192,68 @@ validateNamed :: Valid a => (name -> String) -> [(name, a)] -> ValidationResult
 ensureValid :: ValidationResult -> IO ()
 instance GHC.Base.Monoid Abstract.Valid.ValidationResult
 
-module Graph.Graph
-data Edge a
-newtype EdgeId
-EdgeId :: Int -> EdgeId
-data Node a
-newtype NodeId
-NodeId :: Int -> NodeId
-data Graph a b
-Graph :: [(NodeId, Node a)] -> [(EdgeId, Edge b)] -> Graph a b
-[nodeMap] :: Graph a b -> [(NodeId, Node a)]
-[edgeMap] :: Graph a b -> [(EdgeId, Edge b)]
+module Abstract.Relation
 
--- | Create an empty Graph.
-empty :: Graph a b
+-- | Datatype for endorelations on a
+data Relation a
 
--- | Build a Graph
-build :: [Int] -> [(Int, Int, Int)] -> Graph a b
+-- | An empty relation, with domain and codomain specified.
+empty :: Ord a => [a] -> [a] -> Relation a
 
--- | Insert an edge <tt>e</tt> from <tt>src</tt> to <tt>tgt</tt> in graph
---   <tt>g</tt>, without payload.
-insertEdge :: EdgeId -> NodeId -> NodeId -> Graph a b -> Graph a b
+-- | Compose <tt>r1</tt> and <tt>r2</tt>.
+compose :: (Ord a) => Relation a -> Relation a -> Relation a
 
--- | Insert a node <tt>n</tt> in a graph <tt>g</tt>, without payload.
-insertNode :: NodeId -> Graph a b -> Graph a b
+-- | The identity relation on <tt>dom</tt>.
+id :: Ord a => [a] -> Relation a
 
--- | Insert an edge <tt>e</tt> from <tt>src</tt> to <tt>tgt</tt> in graph
---   <tt>g</tt> with payload <tt>p</tt>.
-insertEdgeWithPayload :: EdgeId -> NodeId -> NodeId -> b -> Graph a b -> Graph a b
+-- | The inverse relation.
+inverseRelation :: (Ord a) => Relation a -> Relation a
 
--- | Insert a node <tt>n</tt> in a graph <tt>g</tt> with payload
---   <tt>p</tt>.
-insertNodeWithPayload :: NodeId -> a -> Graph a b -> Graph a b
+-- | Add a mapping between <tt>x</tt> and <tt>y</tt> to the relation. If
+--   <tt>x</tt> already exists, <tt>y</tt> is joined to the corresponding
+--   elements.
+updateRelation :: Ord a => a -> a -> Relation a -> Relation a
 
--- | Remove edge <tt>e</tt> from <tt>g</tt>.
-removeEdge :: EdgeId -> Graph a b -> Graph a b
+-- | Remove an element from the domain of the relation
+removeFromDomain :: Ord a => a -> Relation a -> Relation a
 
--- | If <tt>n</tt> exists in <tt>g</tt>, and there are no incident edges on
---   it, remove it. Return <tt>g</tt> otherwise.
-removeNode :: NodeId -> Graph a b -> Graph a b
+-- | Remove an element from the codomain of the relation
+removeFromCodomain :: Ord a => a -> Relation a -> Relation a
 
--- | Update <tt>e</tt>'s payload, applying <tt>f</tt> on it.
-updateEdgePayload :: EdgeId -> Graph a b -> (b -> b) -> Graph a b
+-- | Insert an element on the codomain of the relation
+insertOnCodomain :: Ord a => a -> Relation a -> Relation a
 
--- | Update <tt>n</tt>'s payload, applying <tt>f</tt> on it.
-updateNodePayload :: NodeId -> Graph a b -> (a -> a) -> Graph a b
+-- | Return a list of all elements that <tt>x</tt> gets mapped into.
+apply :: (Ord a) => Relation a -> a -> [a]
+domain :: Relation a -> [a]
+codomain :: Relation a -> [a]
 
--- | Return a list of all edge id's from from <tt>g</tt>.
-edges :: Graph a b -> [EdgeId]
+-- | Return a list of all elements in the image of the relation.
+image :: (Eq a) => Relation a -> [a]
+mapping :: Relation a -> Map a [a]
 
--- | Return a list of all node id's from from <tt>g</tt>.
-nodes :: Graph a b -> [NodeId]
+-- | Return the elements in the domain which are not in the image of the
+--   relation (orphans)
+orphans :: (Eq a) => Relation a -> [a]
 
--- | Return a list of all edges with <tt>n</tt> as a source node.
-outgoingEdges :: Graph a b -> NodeId -> [EdgeId]
+-- | Test if <tt>r</tt> is functional.
+isFunctional :: Relation a -> Bool
 
--- | Return a list of all edges with <tt>n</tt> as a target node.
-incomingEdges :: Graph a b -> NodeId -> [EdgeId]
+-- | Test if <tt>r</tt> is injective.
+isInjective :: (Ord a) => Relation a -> Bool
 
--- | Return a list of all edge id's, together with their payloads.
-edgesWithPayload :: Graph a b -> [(EdgeId, Maybe b)]
+-- | Test if <tt>r</tt> is injective out of domain <tt>list</tt>
+isPartialInjective :: Ord a => [a] -> Relation a -> Bool
 
--- | Return a list of all incident edges on <tt>n</tt>.
-incidentEdges :: Graph a b -> NodeId -> [EdgeId]
+-- | Test if <tt>r</tt> is surjective.
+isSurjective :: (Ord a) => Relation a -> Bool
 
--- | Return a list of all neighbour nodes from <tt>n</tt>.
-neighbourNodes :: Graph a b -> NodeId -> [NodeId]
-
--- | Return a pair containing <tt>e</tt>'s source and target nodes.
-nodesOf :: Graph a b -> EdgeId -> Maybe (NodeId, NodeId)
-
--- | Return a list of all nodes that are target of any edge going out from
---   <tt>n</tt>.
-targetedNodes :: Graph a b -> NodeId -> [NodeId]
-
--- | Return a list of all nodes that are source of any edge going into
---   <tt>n</tt>.
-sourceNodes :: Graph a b -> NodeId -> [NodeId]
-
--- | Return a list of all node id's, together with their payloads.
-nodesWithPayload :: Graph a b -> [(NodeId, Maybe a)]
-
--- | Test whether a graph is empty.
-null :: Graph a b -> Bool
-
--- | Return <tt>n</tt>'s payload.
-nodePayload :: Graph a b -> NodeId -> Maybe a
-
--- | Return <tt>e</tt>'s payload.
-edgePayload :: Graph a b -> EdgeId -> Maybe b
-
--- | Return <tt>e</tt>'s source.
-sourceOf :: Graph a b -> EdgeId -> Maybe NodeId
-
--- | Return <tt>e</tt>'s source or error in the case of undefined
-sourceOfUnsafe :: Graph a b -> EdgeId -> NodeId
-
--- | Return <tt>e</tt>'s target.
-targetOf :: Graph a b -> EdgeId -> Maybe NodeId
-
--- | Return <tt>e</tt>'s target or error in the case of undefined
-targetOfUnsafe :: Graph a b -> EdgeId -> NodeId
-extractSource :: Graph a b -> EdgeId -> NodeId
-extractTarget :: Graph a b -> EdgeId -> NodeId
-
--- | Test if <tt>e</tt> is an edge from graph <tt>g</tt>.
-isEdgeOf :: Graph a b -> EdgeId -> Bool
-
--- | Test if <tt>n</tt> is a node from graph <tt>g</tt>.
-isNodeOf :: Graph a b -> NodeId -> Bool
-
--- | Test if <tt>n1</tt> and <tt>n2</tt> are adjacent.
-isAdjacentTo :: Graph a b -> NodeId -> NodeId -> Bool
-
--- | Test if <tt>n</tt> is connected to edge <tt>e</tt>.
-isIncidentTo :: Graph a b -> NodeId -> EdgeId -> Bool
-
--- | Infinite list of new node instances of a graph
-newNodes :: Graph a b -> [NodeId]
-
--- | Infinite list of new edge instances of a graph
-newEdges :: Graph a b -> [EdgeId]
-instance (GHC.Read.Read a, GHC.Read.Read b) => GHC.Read.Read (Graph.Graph.Graph a b)
-instance GHC.Read.Read Graph.Graph.EdgeId
-instance GHC.Classes.Ord Graph.Graph.EdgeId
-instance GHC.Classes.Eq Graph.Graph.EdgeId
-instance GHC.Read.Read a => GHC.Read.Read (Graph.Graph.Edge a)
-instance GHC.Show.Show a => GHC.Show.Show (Graph.Graph.Edge a)
-instance GHC.Read.Read Graph.Graph.NodeId
-instance GHC.Classes.Ord Graph.Graph.NodeId
-instance GHC.Classes.Eq Graph.Graph.NodeId
-instance GHC.Read.Read a => GHC.Read.Read (Graph.Graph.Node a)
-instance GHC.Show.Show a => GHC.Show.Show (Graph.Graph.Node a)
-instance GHC.Classes.Eq (Graph.Graph.Node a)
-instance GHC.Classes.Eq (Graph.Graph.Edge a)
-instance GHC.Classes.Eq (Graph.Graph.Graph a b)
-instance GHC.Show.Show (Graph.Graph.Graph a b)
-instance GHC.Show.Show Graph.Graph.NodeId
-instance GHC.Show.Show Graph.Graph.EdgeId
-instance GHC.Num.Num Graph.Graph.NodeId
-instance GHC.Enum.Enum Graph.Graph.NodeId
-instance GHC.Num.Num Graph.Graph.EdgeId
-instance GHC.Enum.Enum Graph.Graph.EdgeId
-instance Abstract.Valid.Valid (Graph.Graph.Graph a b)
+-- | Test if <tt>r</tt> is total.
+isTotal :: (Ord a) => Relation a -> Bool
+instance (GHC.Classes.Ord a, GHC.Read.Read a) => GHC.Read.Read (Abstract.Relation.Relation a)
+instance GHC.Show.Show a => GHC.Show.Show (Abstract.Relation.Relation a)
+instance GHC.Classes.Ord a => GHC.Classes.Ord (Abstract.Relation.Relation a)
+instance (GHC.Classes.Eq a, GHC.Classes.Ord a) => GHC.Classes.Eq (Abstract.Relation.Relation a)
 
 module Abstract.Morphism
 class (Eq m) => Morphism m where type Obj m :: * where {
@@ -419,6 +275,7 @@ GenericMorphism :: MorphismType
 Monomorphism :: MorphismType
 Epimorphism :: MorphismType
 Isomorphism :: MorphismType
+type Span m = (m, m)
 class Morphism m => FindMorphism m where findMonomorphisms = findMorphisms Monomorphism findEpimorphisms = findMorphisms Epimorphism findIsomorphisms = findMorphisms Isomorphism findAllMorphisms = findMorphisms GenericMorphism
 
 -- | Given a type <b><i>t</i></b> of <tt>MorphismType</tt> and two objects
@@ -438,12 +295,395 @@ findIsomorphisms :: FindMorphism m => Obj m -> Obj m -> [m]
 -- | Given two objects A and B, finds all morphisms from A to B
 findAllMorphisms :: FindMorphism m => Obj m -> Obj m -> [m]
 
+-- | Given two lists of TypedGraphMorphism <tt>fi : Ai -&gt; B</tt> and
+--   <tt>gi : Ai -&gt; C</tt> it induces a Morphism <tt>h : B -&gt; C</tt>
+--   shuch that <tt>h . fi = gi</tt> for all <tt>i</tt>. The lists must
+--   have the same length and must not be empty.
+induceSpanMorphism :: FindMorphism m => [m] -> [m] -> m
+
 -- | Given a NAC <i>n : L -&gt; N </i> and a match <i>m : L -&gt; G</i>,
 --   finds the morphisms from <i>N</i> to <i>G</i> that are injective out
 --   of the image of <i>n</i>
 partialInjectiveMatches :: FindMorphism m => m -> m -> [m]
+
+-- | Given two TypedGraphMorphism <tt>f : B -&gt; A</tt> and <tt>g : C
+--   -&gt; A</tt> it finds a list of Morphisms <tt>hi : B -&gt; C</tt>
+--   shuch that <tt>f . ¬g = hi</tt> for all <tt>i</tt>.
+findCospanCommuter :: FindMorphism m => MorphismType -> m -> m -> [m]
 instance GHC.Enum.Enum Abstract.Morphism.MorphismType
 instance GHC.Show.Show Abstract.Morphism.MorphismType
+
+module Abstract.Constraint
+data AtomicConstraint m
+AtomicConstraint :: String -> m -> Bool -> AtomicConstraint m
+[name] :: AtomicConstraint m -> String
+[morphism] :: AtomicConstraint m -> m
+[positive] :: AtomicConstraint m -> Bool
+buildNamedAtomicConstraint :: String -> m -> Bool -> AtomicConstraint m
+
+-- | Given an object <tt>G</tt> and a AtomicConstraint <tt>a : P -&gt;
+--   C</tt>, check whether <tt>G</tt> satisfies the AtomicConstraint
+--   <tt>a</tt>
+satisfiesAtomicConstraint :: (FindMorphism m) => Obj m -> AtomicConstraint m -> Bool
+
+-- | Given an object <tt>G</tt> and a list of AtomicConstraints <tt>a : P
+--   -&gt; C</tt>, check whether <tt>G</tt> satisfies the all them
+satisfiesAllAtomicConstraints :: (FindMorphism m) => Obj m -> [AtomicConstraint m] -> Bool
+data Constraint m
+Atomic :: AtomicConstraint m -> Constraint m
+[atomic] :: Constraint m -> AtomicConstraint m
+And :: Constraint m -> Constraint m -> Constraint m
+[lc] :: Constraint m -> Constraint m
+[rc] :: Constraint m -> Constraint m
+Or :: Constraint m -> Constraint m -> Constraint m
+[lc] :: Constraint m -> Constraint m
+[rc] :: Constraint m -> Constraint m
+Not :: Constraint m -> Constraint m
+[nc] :: Constraint m -> Constraint m
+
+-- | Given an object <tt>G</tt> and a Constraint <tt>c</tt> (a Boolean
+--   formula over atomic constraints), check whether <tt>G</tt> satisfies
+--   <tt>c</tt>
+satisfiesConstraint :: (FindMorphism m) => Obj m -> Constraint m -> Bool
+
+-- | Given an object <tt>G</tt> and a list of Constraints (Boolean formulas
+--   over atomic constraints), check whether <tt>G</tt> satisfies the all
+--   them
+satisfiesAllConstraints :: (FindMorphism m) => Obj m -> [Constraint m] -> Bool
+instance GHC.Show.Show m => GHC.Show.Show (Abstract.Constraint.Constraint m)
+instance GHC.Show.Show m => GHC.Show.Show (Abstract.Constraint.AtomicConstraint m)
+instance Abstract.Valid.Valid m => Abstract.Valid.Valid (Abstract.Constraint.AtomicConstraint m)
+instance Abstract.Valid.Valid m => Abstract.Valid.Valid (Abstract.Constraint.Constraint m)
+
+module Abstract.Complete
+
+-- | Type class for morphisms whose category is Complete.
+--   
+--   Mainly provides categorical operations that Complete categories are
+--   guaranteed to have.
+--   
+--   Note that for performance reasons, verigraph assumes that the
+--   parameters are valid for all functions in this module.
+class (Morphism m) => Complete m where calculatePullback f g = (f', g') where a = domain f b = domain g (a', b') = calculateProduct a b a'f = compose a' f b'g = compose b' g h = calculateEqualizer a'f b'g f' = compose h b' g' = compose h a'
+
+-- | Given two morphisms <tt><i>f : A -&gt; B</i></tt> and <tt><i>g : A
+--   -&gt; B</i></tt> retuns the equalizer morphism <tt><i>h : X -&gt;
+--   A</i></tt>
+calculateEqualizer :: Complete m => m -> m -> m
+
+-- | Given a non-empty list of morphisms of the form <tt><i>f : A -&gt;
+--   B</i></tt> returns the equalizer morphism <tt><i>h : X -&gt;
+--   A</i></tt>
+calculateNEqualizer :: Complete m => NonEmpty m -> m
+
+-- | Given two objects <tt>A</tt> and <tt>B</tt> it returns the product
+--   <tt>(AxB, f: AxB -&gt; A, g: AxB -&gt; B)</tt>
+calculateProduct :: Complete m => Obj m -> Obj m -> (m, m)
+
+-- | Given a non-empty list of objects <tt>Bi</tt> it returns the product
+--   <tt>fi : PROD(Bi) -&gt; Bi</tt>
+calculateNProduct :: Complete m => NonEmpty (Obj m) -> [m]
+finalObject :: Complete m => m -> Obj m
+calculatePullback :: Complete m => m -> m -> (m, m)
+
+
+-- | A Cocomplete category is one which has all small colimits. This module
+--   provides a signature for such colimits and a default implementation of
+--   pushouts based on coequalizers and coproducts.
+module Abstract.Cocomplete
+
+-- | Type class for morphisms whose category is Cocomplete.
+--   
+--   Mainly provides categorical operations that Cocomplete categories are
+--   guaranteed to have.
+--   
+--   Note that for performance reasons, verigraph assumes that the
+--   parameters are valid for all functions in this module.
+class (Morphism m) => Cocomplete m where calculatePushout f g = (f', g') where b = codomain f c = codomain g (b', c') = calculateCoproduct b c gc' = compose g c' fb' = compose f b' h = calculateCoequalizer fb' gc' g' = compose b' h f' = compose c' h
+
+-- | Given two morphisms <tt><i>f : A -&gt; B</i></tt> and <tt><i>g : A
+--   -&gt; B</i></tt> retuns the coequalizer morphism <tt><i>h : B -&gt;
+--   X</i></tt>
+calculateCoequalizer :: Cocomplete m => m -> m -> m
+
+-- | Given a non-empty list of morphisms of the form <tt><i>f : A -&gt;
+--   B</i></tt> returns the coequalizer Morphism <tt><i>h : B -&gt;
+--   X</i></tt>
+calculateNCoequalizer :: Cocomplete m => NonEmpty m -> m
+
+-- | Given two objects <tt>A</tt> and <tt>B</tt> it returns the coproduct
+--   <tt>(A+B, f: A -&gt; A+B, g: B -&gt; A+B)</tt>
+calculateCoproduct :: Cocomplete m => Obj m -> Obj m -> (m, m)
+
+-- | Given a non-empty list of objects <tt>Bi</tt> it returns the coproduct
+--   <tt>fi : Bi -&gt; SUM(Bi)</tt>
+calculateNCoproduct :: Cocomplete m => NonEmpty (Obj m) -> [m]
+initialObject :: Cocomplete m => m -> Obj m
+calculatePushout :: Cocomplete m => m -> m -> (m, m)
+
+module Abstract.Cardinality
+class Cardinality o
+
+-- | Given an object, returns its cardinality
+cardinality :: Cardinality o => o -> Int
+
+
+-- | An implementation of labeled directed graphs, allowing multiple
+--   parallel edges.
+--   
+--   The implementation is based on using integer identifiers for nodes and
+--   edges, and association lists to store additional information such as
+--   payloads, sources and targets.
+--   
+--   Operation comments contain the operation time complexity in the Big-O
+--   notation <a>http://en.wikipedia.org/wiki/Big_O_notation</a>, denoting
+--   by <i>v</i> the number of nodes in a graph, and by <i>e</i> the number
+--   of edges in a graph.
+module Graph.Graph
+
+-- | A directed graph, allowing parallel edges. Both nodes and edges have
+--   optional payloads of arbitrary types.
+--   
+--   Every node and edge is identified by a unique integer. The
+--   "namespaces" of nodes and edges are independent, i.e. the same number
+--   may be used to identify both a node and an edge within the same graph.
+--   
+--   Equality tests cost <i>O(v² + e²)</i>, and disregards the payloads.
+data Graph n e
+Graph :: [(NodeId, Node n)] -> [(EdgeId, Edge e)] -> Graph n e
+[nodeMap] :: Graph n e -> [(NodeId, Node n)]
+[edgeMap] :: Graph n e -> [(EdgeId, Edge e)]
+
+-- | Type of node identifiers, which are essentially integers.
+newtype NodeId
+NodeId :: Int -> NodeId
+
+-- | Type of edge identifiers, which are essentially integers.
+newtype EdgeId
+EdgeId :: Int -> EdgeId
+
+-- | Nodes from within a graph.
+data Node n
+Node :: NodeId -> n -> Node n
+[nodeId] :: Node n -> NodeId
+[nodeInfo] :: Node n -> n
+
+-- | Edges from within a graph.
+data Edge e
+Edge :: EdgeId -> NodeId -> NodeId -> e -> Edge e
+[edgeId] :: Edge e -> EdgeId
+[sourceId] :: Edge e -> NodeId
+[targetId] :: Edge e -> NodeId
+[edgeInfo] :: Edge e -> e
+
+-- | Shorthand for having a node along with its context.
+type NodeInContext n e = (Node n, NodeContext n e)
+
+-- | Shorthand for having an edge along with its source and target in
+--   context.
+--   
+--   Because of lazyness, constructing a value of this type does <b>not</b>
+--   evaluate the node lookup. Thus, forcing the evaluation of the nodes
+--   costs <i>O(v)</i>. Keep this in mind when using values of this type.
+type EdgeInContext n e = (NodeInContext n e, Edge e, NodeInContext n e)
+
+-- | Provides access to a node's incident edges.
+data NodeContext n e
+
+-- | Get the edges that are incident on the current node. <i>O(e)</i>, plus
+--   the cost of evaluating the nodes of the result (see
+--   <a>EdgeInContext</a>).
+incidentEdges :: NodeContext n e -> [EdgeInContext n e]
+
+-- | Get the edges that have the current node as target. <i>O(e)</i>, plus
+--   the cost of evaluating the nodes of the result (see
+--   <a>EdgeInContext</a>).
+incomingEdges :: NodeContext n e -> [EdgeInContext n e]
+
+-- | Get the edges that have the current node as source. <i>O(e)</i>, plus
+--   the cost of evaluating the nodes of the result (see
+--   <a>EdgeInContext</a>).
+outgoingEdges :: NodeContext n e -> [EdgeInContext n e]
+
+-- | Test whether a graph is empty. <i>O(1)</i>.
+null :: Graph n e -> Bool
+
+-- | Test if a node identifier is contained in the graph. <i>O(v)</i>.
+isNodeOf :: Graph n e -> NodeId -> Bool
+
+-- | Test if an edge identifier is contained in the graph. <i>O(e)</i>.
+isEdgeOf :: Graph n e -> EdgeId -> Bool
+
+-- | Look up the node with given identifier in the graph. <i>O(v)</i>.
+lookupNode :: NodeId -> Graph n e -> Maybe (Node n)
+
+-- | Look up the node with given identifier, along with its context, in the
+--   graph. <i>O(v)</i>.
+lookupNodeInContext :: NodeId -> Graph n e -> Maybe (NodeInContext n e)
+
+-- | Look up the edge with given identifier in the graph. <i>O(e)</i>.
+lookupEdge :: EdgeId -> Graph n e -> Maybe (Edge e)
+
+-- | Look up the edge with given identifier, along with its context, in the
+--   graph. <i>O(e)</i>, plus the cost of evaluating the nodes of the
+--   result (see <a>EdgeInContext</a>).
+lookupEdgeInContext :: EdgeId -> Graph n e -> Maybe (EdgeInContext n e)
+
+-- | Test if the given nodes are adjacent. <i>O(e²)</i>
+isAdjacentTo :: Graph n e -> NodeId -> NodeId -> Bool
+
+-- | Test if the given edge has given node as source or target.
+--   <i>O(e)</i>.
+isIncidentTo :: Graph n e -> NodeId -> EdgeId -> Bool
+
+-- | Gets a pair containing the source and target of the given edge.
+--   <i>O(e)</i>.
+
+-- | <i>Deprecated: This function performs unnecessary dictionary lookups.
+--   Try using lookupNode, lookupNodeInContext, nodes or nodesInContext
+--   instead.</i>
+nodesOf :: Graph n e -> EdgeId -> Maybe (NodeId, NodeId)
+
+-- | Gets the source of the given edge. <i>O(e)</i>.
+
+-- | <i>Deprecated: This function performs unnecessary dictionary lookups.
+--   Try using lookupNode, lookupNodeInContext, nodes or nodesInContext
+--   instead.</i>
+sourceOf :: Graph n e -> EdgeId -> Maybe NodeId
+
+-- | Gets the source of the given edge, crashing if no such edge exists.
+--   <i>O(e)</i>.
+
+-- | <i>Deprecated: This function performs unnecessary dictionary lookups.
+--   Try using lookupNode, lookupNodeInContext, nodes or nodesInContext
+--   instead.</i>
+sourceOfUnsafe :: Graph n e -> EdgeId -> NodeId
+
+-- | Gets the target of the given edge. <i>O(e)</i>.
+
+-- | <i>Deprecated: This function performs unnecessary dictionary lookups.
+--   Try using lookupNode, lookupNodeInContext, nodes or nodesInContext
+--   instead.</i>
+targetOf :: Graph n e -> EdgeId -> Maybe NodeId
+
+-- | Gets the target of the given edge, crashing if no such edge exists.
+--   <i>O(e)</i>.
+
+-- | <i>Deprecated: This function performs unnecessary dictionary lookups.
+--   Try using lookupNode, lookupNodeInContext, nodes or nodesInContext
+--   instead.</i>
+targetOfUnsafe :: Graph n e -> EdgeId -> NodeId
+
+-- | Gets a list of all edges incident to the given node. <i>O(e²)</i>
+
+-- | <i>Deprecated: This function performs unnecessary dictionary lookups.
+--   Try using lookupNode, lookupNodeInContext, nodes or nodesInContext
+--   instead.</i>
+getIncidentEdges :: Graph n e -> NodeId -> [EdgeId]
+
+-- | Empty graph, with no nodes or edges. <i>O(1)</i>
+empty :: Graph n e
+
+-- | Build a graph from lists of nodes and edges. Edges with undefined
+--   source or target are ignored and omitted from the resulting graph.
+--   <i>O(v + e*v)</i>
+build :: [Int] -> [(Int, Int, Int)] -> Graph (Maybe n) (Maybe e)
+
+-- | Build a graph from lists of nodes and edges. Edges with undefined
+--   source or target are ignored and omitted from the resulting graph.
+--   <i>O(v + e*v)</i>
+fromNodesAndEdges :: [Node n] -> [Edge e] -> Graph n e
+
+-- | Insert a node with given identifier into a graph, without payload. If
+--   a node with the given identifier aready exists, its payload is
+--   removed. <i>O(v)</i>.
+insertNode :: NodeId -> Graph (Maybe n) e -> Graph (Maybe n) e
+
+-- | Insert a node with given identifier and payload into a graph. If a
+--   node with the given identifier already exists, its payload is updated.
+--   <i>O(v)</i>.
+insertNodeWithPayload :: NodeId -> n -> Graph n e -> Graph n e
+
+-- | (<tt>insertEdge e src tgt g</tt>) will insert an edge with identifier
+--   <tt>e</tt> from <tt>src</tt> to <tt>tgt</tt> in graph <tt>g</tt>,
+--   without payload. If <tt>src</tt> or <tt>tgt</tt> are not nodes of
+--   <tt>g</tt>, the graph is not modified. If an edge with identifier
+--   <tt>e</tt> already exists, it is updated. <i>O(v + e)</i>.
+insertEdge :: EdgeId -> NodeId -> NodeId -> Graph n (Maybe e) -> Graph n (Maybe e)
+
+-- | (<tt>insertEdgeWithPayload e src tgt p g</tt>) will insert an edge
+--   with identifier <tt>e</tt> from <tt>src</tt> to <tt>tgt</tt> in graph
+--   <tt>g</tt> with payload <tt>p</tt>. If <tt>src</tt> or <tt>tgt</tt>
+--   are not nodes of <tt>g</tt>, the graph is not modified. If an edge
+--   with identifier <tt>e</tt> already exists, it is updated. <i>O(v +
+--   e)</i>.
+insertEdgeWithPayload :: EdgeId -> NodeId -> NodeId -> e -> Graph n e -> Graph n e
+
+-- | Removes the given node from the graph, unless it has any incident
+--   edges. <i>O(v + e²)</i>.
+removeNode :: NodeId -> Graph n e -> Graph n e
+
+-- | Removes the given node from the graph, unless it has any incident
+--   edges. <i>O(v + e²)</i>. It does not verify if the node has incident
+--   edges, thus it may generate invalid graphs.
+removeNodeForced :: NodeId -> Graph n e -> Graph n e
+
+-- | Removes the given node and all incident edges from the graph. <i>O(v +
+--   e)</i>
+removeNodeAndIncidentEdges :: NodeId -> Graph n e -> Graph n e
+
+-- | Remove the given edge from the graph. <i>O(e)</i>.
+removeEdge :: EdgeId -> Graph n e -> Graph n e
+
+-- | Update the node's payload, applying the given function on it.
+--   <i>O(v)</i>.
+updateNodePayload :: NodeId -> Graph n e -> (n -> n) -> Graph n e
+
+-- | Update the edge's payload, applying the function on it. <i>O(e)</i>.
+updateEdgePayload :: EdgeId -> Graph n e -> (e -> e) -> Graph n e
+
+-- | List of all nodes from the graph. <i>O(v)</i>.
+nodes :: Graph n e -> [Node n]
+
+-- | List of all edges from the graph. <i>O(e)</i>.
+edges :: Graph n e -> [Edge e]
+
+-- | List of all node id's from from the graph. <i>O(v)</i>.
+nodeIds :: Graph n e -> [NodeId]
+
+-- | List of all edge id's from from the graph. <i>O(e)</i>.
+edgeIds :: Graph n e -> [EdgeId]
+
+-- | List of all nodes from the graph, along with their contexts.
+--   <i>O(v)</i>.
+nodesInContext :: Graph n e -> [NodeInContext n e]
+
+-- | List of all edges from the graph, along with their contexts.
+--   <i>O(e)</i>, plus the cost of evaluating the nodes of the result (see
+--   <a>EdgeInContext</a>).
+edgesInContext :: Graph n e -> [EdgeInContext n e]
+
+-- | Infinite list of fresh node identifiers for a graph. <i>O(v)</i>.
+newNodes :: Graph n e -> [NodeId]
+
+-- | Infinite list of fresh edge identifiers for a graph. <i>O(e)</i>.
+newEdges :: Graph n e -> [EdgeId]
+instance GHC.Show.Show e => GHC.Show.Show (Graph.Graph.Edge e)
+instance GHC.Show.Show n => GHC.Show.Show (Graph.Graph.Node n)
+instance GHC.Classes.Ord Graph.Graph.EdgeId
+instance GHC.Classes.Eq Graph.Graph.EdgeId
+instance GHC.Classes.Ord Graph.Graph.NodeId
+instance GHC.Classes.Eq Graph.Graph.NodeId
+instance GHC.Show.Show Graph.Graph.NodeId
+instance GHC.Show.Show Graph.Graph.EdgeId
+instance GHC.Num.Num Graph.Graph.NodeId
+instance GHC.Enum.Enum Graph.Graph.NodeId
+instance GHC.Num.Num Graph.Graph.EdgeId
+instance GHC.Enum.Enum Graph.Graph.EdgeId
+instance GHC.Classes.Eq (Graph.Graph.Graph n e)
+instance GHC.Show.Show (Graph.Graph.Graph n e)
+instance Abstract.Cardinality.Cardinality (Graph.Graph.Graph n e)
+instance Abstract.Valid.Valid (Graph.Graph.Graph n e)
 
 module Graph.GraphMorphism
 data GraphMorphism a b
@@ -453,6 +693,10 @@ empty :: Graph a b -> Graph a b -> GraphMorphism a b
 
 -- | Construct a graph morphism
 buildGraphMorphism :: Graph a b -> Graph a b -> [(Int, Int)] -> [(Int, Int)] -> GraphMorphism a b
+
+-- | Constructs a <tt>GraphMorphism</tt> from two Graphs, a node relation
+--   and a edge relation.
+fromGraphsAndRelations :: Graph a b -> Graph a b -> Relation NodeId -> Relation EdgeId -> GraphMorphism a b
 
 -- | The inverse graph morphism.
 invertGraphMorphism :: GraphMorphism a b -> GraphMorphism a b
@@ -470,7 +714,7 @@ updateNodes :: NodeId -> NodeId -> GraphMorphism a b -> GraphMorphism a b
 
 -- | Inserts nodes in a graph morphism, if the nodes do not exist, they are
 --   created
-updateNodeRelation :: NodeId -> NodeId -> GraphMorphism a b -> GraphMorphism a b
+updateNodeRelation :: NodeId -> NodeId -> GraphMorphism (Maybe a) b -> GraphMorphism (Maybe a) b
 
 -- | Modifies a graph morphism, mapping edge e1 to edge e2. It assumes both
 --   edges already exist.
@@ -487,35 +731,38 @@ removeEdgeFromDomain :: EdgeId -> GraphMorphism a b -> GraphMorphism a b
 -- | Remove an edge from the codomain of the morphism
 removeEdgeFromCodomain :: EdgeId -> GraphMorphism a b -> GraphMorphism a b
 
--- | Remove a node from the domain of the morphism
---   
---   TODO: what happens if there were edges incident to the node?
+-- | Remove a node from the domain of the morphism. Don't change the
+--   morphism if there were edges incident to the node.
 removeNodeFromDomain :: NodeId -> GraphMorphism a b -> GraphMorphism a b
 
--- | Remove a node from the codomain of the morphism
---   
---   TODO: what happens if there were edges incident to the node?
+-- | Remove a node from the domain of the morphism It does not verify if
+--   the node has incident edges, thus it may generate invalid graph
+--   morphisms.
+removeNodeFromDomainForced :: NodeId -> GraphMorphism a b -> GraphMorphism a b
+
+-- | Remove a node from the codomain of the morphism Don't change the
+--   morphism if there were edges incident to the node.
 removeNodeFromCodomain :: NodeId -> GraphMorphism a b -> GraphMorphism a b
 
 -- | This function adds an edge e1 (with source s1 and target t1) to the
 --   domain of the morphism, and associate it to e2 It assumes s1, t1, e2
 --   already exist, and that e1 does not exist.
-createEdgeOnDomain :: EdgeId -> NodeId -> NodeId -> EdgeId -> GraphMorphism a b -> GraphMorphism a b
+createEdgeOnDomain :: EdgeId -> NodeId -> NodeId -> EdgeId -> GraphMorphism a (Maybe b) -> GraphMorphism a (Maybe b)
 
 -- | This function adds an edge e2 (with source s2 and target t2) to the
 --   codomain of the morphism. It assumes that s2,t2 exist, and that e2
 --   does not exist
-createEdgeOnCodomain :: EdgeId -> NodeId -> NodeId -> GraphMorphism a b -> GraphMorphism a b
+createEdgeOnCodomain :: EdgeId -> NodeId -> NodeId -> GraphMorphism a (Maybe b) -> GraphMorphism a (Maybe b)
 
 -- | This function adds an edge e1 (with source s1 and target t1) to the
 --   domain of the morphism, and associate it to e2 It assumes s1, t1, e2
 --   already exist, and that e1 does not exist.
-createNodeOnDomain :: NodeId -> NodeId -> GraphMorphism a b -> GraphMorphism a b
+createNodeOnDomain :: NodeId -> NodeId -> GraphMorphism (Maybe a) b -> GraphMorphism (Maybe a) b
 
 -- | This function adds an edge e2 (with source s2 and target t2) to the
 --   codomain of the morphism. It assumes that s2,t2 exist, and that e2
 --   does not exist
-createNodeOnCodomain :: NodeId -> GraphMorphism a b -> GraphMorphism a b
+createNodeOnCodomain :: NodeId -> GraphMorphism (Maybe a) b -> GraphMorphism (Maybe a) b
 
 -- | Return the node to which <tt>ln</tt> gets mapped.
 applyNode :: GraphMorphism a b -> NodeId -> Maybe NodeId
@@ -533,42 +780,146 @@ applyEdgeUnsafe :: GraphMorphism a b -> EdgeId -> EdgeId
 nodeRelation :: GraphMorphism a b -> Relation NodeId
 edgeRelation :: GraphMorphism a b -> Relation EdgeId
 
--- | Return the orphan nodes in a graph morphism
-orphanNodes :: GraphMorphism a b -> [NodeId]
+-- | Return the orphan nodes ids in a graph morphism
+orphanNodeIds :: GraphMorphism a b -> [NodeId]
+
+-- | Return the orphan edgesIds in a graph morphism
+orphanEdgeIds :: GraphMorphism a b -> [EdgeId]
 
 -- | Return the orphan edges in a graph morphism
-orphanEdges :: GraphMorphism a b -> [EdgeId]
+orphanEdges :: GraphMorphism a b -> [Edge b]
 
 -- | Test if a <tt>nac</tt> is partial injective (injective out of
 --   <tt>q</tt>)
 isPartialInjective :: GraphMorphism a b -> GraphMorphism a b -> Bool
-instance (GHC.Read.Read a, GHC.Read.Read b) => GHC.Read.Read (Graph.GraphMorphism.GraphMorphism a b)
 instance GHC.Classes.Eq (Graph.GraphMorphism.GraphMorphism a b)
 instance GHC.Show.Show (Graph.GraphMorphism.GraphMorphism a b)
 instance Abstract.Morphism.Morphism (Graph.GraphMorphism.GraphMorphism a b)
 instance Abstract.Valid.Valid (Graph.GraphMorphism.GraphMorphism a b)
 
+module Graph.QuickCheck
+
+-- | Generate a random node that is a member of the given graph. Must not
+--   be used with empty graphs, so calls to this are often similar to the
+--   following:
+--   
+--   not (Prelude.null $ nodes graph) ==&gt; forAll (randomNodeOf graph) $
+--   node -&gt; someProperty graph node
+randomNodeOf :: Graph n e -> Gen (Node n)
+
+-- | Generate a random node identifier that is a member of the given graph.
+--   Must not be used with empty graphs, so calls to this are often similar
+--   to the following:
+--   
+--   not (Prelude.null $ nodes graph) ==&gt; forAll (randomNodeIdOf graph)
+--   $ nodeId -&gt; someProperty graph nodeId
+randomNodeIdOf :: Graph n e -> Gen NodeId
+
+-- | Generate a random node that is a member of the given graph, along with
+--   its context. Must not be used with empty graphs, so calls to this are
+--   often similar to the following:
+--   
+--   not (Prelude.null $ nodes graph) ==&gt; forAll (randomNodeInContextOf
+--   graph) $ (node, ctx) -&gt; someProperty graph node ctx
+randomNodeInContextOf :: Graph n e -> Gen (NodeInContext n e)
+
+-- | Generate a random edge that is a member of the given graph. Must not
+--   be used with empty graphs, so calls to this are often similar to the
+--   following:
+--   
+--   not (Prelude.null $ edges graph) ==&gt; forAll (randomEdgeOf graph) $
+--   edge -&gt; someProperty graph edge
+randomEdgeOf :: Graph n e -> Gen (Edge e)
+
+-- | Generate a random edge identifier that is a member of the given graph.
+--   Must not be used with empty graphs, so calls to this are often similar
+--   to the following:
+--   
+--   not (Prelude.null $ edges graph) ==&gt; forAll (randomEdgeIdOf graph)
+--   $ edgeId -&gt; someProperty graph edgeId
+randomEdgeIdOf :: Graph n e -> Gen EdgeId
+
+-- | Generate a random edge that is a member of the given graph, along with
+--   its context. Must not be used with empty graphs, so calls to this are
+--   often similar to the following:
+--   
+--   not (Prelude.null $ edges graph) ==&gt; forAll (randomEdgeInContextOf
+--   graph) $ (edge, ctx) -&gt; someProperty graph edge ctx
+randomEdgeInContextOf :: Graph n e -> Gen (EdgeInContext n e)
+
+-- | Given generators for payloads, the number of nodes and the number of
+--   edges, generates a random graph.
+randomGraph :: Gen n -> Gen e -> Int -> Int -> Gen (Graph n e)
+
+-- | Produces all immediate shrinks of the given graph. Each shrink step
+--   may remove a single node (along with all its incident edges) or a
+--   single edge.
+shrinkGraph :: Graph n e -> [Graph n e]
+instance Test.QuickCheck.Arbitrary.Arbitrary Graph.Graph.NodeId
+instance Test.QuickCheck.Arbitrary.Arbitrary Graph.Graph.EdgeId
+instance Test.QuickCheck.Arbitrary.Arbitrary n => Test.QuickCheck.Arbitrary.Arbitrary (Graph.Graph.Node n)
+instance Test.QuickCheck.Arbitrary.Arbitrary e => Test.QuickCheck.Arbitrary.Arbitrary (Graph.Graph.Edge e)
+instance (Test.QuickCheck.Arbitrary.Arbitrary n, Test.QuickCheck.Arbitrary.Arbitrary e) => Test.QuickCheck.Arbitrary.Arbitrary (Graph.Graph.Graph n e)
+instance GHC.Show.Show (Graph.Graph.NodeContext n e)
+instance GHC.Classes.Eq n => GHC.Classes.Eq (Graph.Graph.Node n)
+instance GHC.Classes.Eq e => GHC.Classes.Eq (Graph.Graph.Edge e)
+
+module TypedGraph.DPO.OccurenceRelation
+data RelationItem
+Node :: NodeId -> RelationItem
+Edge :: EdgeId -> RelationItem
+Rule :: String -> RelationItem
+type Relation = Set (RelationItem, RelationItem)
+type AbstractRelation = Set (AbstractType, (RelationItem, RelationItem), (RelationItem, RelationItem))
+data AbstractType
+AbstractProduceForbid :: AbstractType
+AbstractDeleteForbid :: AbstractType
+isRuleAndElement :: (RelationItem, RelationItem) -> Bool
+filterRulesOccurrenceRelation :: Relation -> Relation
+filterElementsOccurrenceRelation :: Relation -> Relation
+filterCreationRelation :: Relation -> Relation
+filterDeletionRelation :: Relation -> Relation
+isCreation :: (RelationItem, RelationItem) -> Bool
+isDeletion :: (RelationItem, RelationItem) -> Bool
+isNode :: RelationItem -> Bool
+
+-- | Tests wether an item appears after a rule in a given occurrence
+--   relation
+happensAfterAction :: Relation -> RelationItem -> String -> Bool
+
+-- | Tests wether an item appears before a rule in a given occurrence
+--   relation
+happensBeforeAction :: Relation -> RelationItem -> String -> Bool
+relatedItens :: Relation -> (RelationItem, RelationItem) -> Bool
+
+-- | Given a relation item <tt>i</tt> and the deletion relation of an
+--   doubly typed grammar, it returns True if the item is deleted by some
+--   rule in this relation and False otherwise
+neverDeleted :: RelationItem -> Relation -> Bool
+present :: RelationItem -> Relation -> Bool
+findOrder :: Relation -> Set RelationItem -> Maybe [RelationItem]
+buildTransitivity :: Relation -> Relation
+relationToString :: Relation -> String
+restrictionToString :: AbstractRelation -> String
+instance GHC.Show.Show TypedGraph.DPO.OccurenceRelation.AbstractType
+instance GHC.Classes.Ord TypedGraph.DPO.OccurenceRelation.AbstractType
+instance GHC.Classes.Eq TypedGraph.DPO.OccurenceRelation.AbstractType
+instance GHC.Show.Show TypedGraph.DPO.OccurenceRelation.RelationItem
+instance GHC.Classes.Ord TypedGraph.DPO.OccurenceRelation.RelationItem
+instance GHC.Classes.Eq TypedGraph.DPO.OccurenceRelation.RelationItem
+
 module TypedGraph.Graph
 
 -- | A typed graph is a morphism whose codomain is the type graph.
-type TypedGraph a b = GraphMorphism a b
+type TypedGraph a b = GraphMorphism (Maybe a) (Maybe b)
 
 -- | Obtain the untyped version of the typed graph
-untypedGraph :: TypedGraph a b -> Graph a b
-
--- | <i>Deprecated: Use extractEdgeType instead</i>
-getEdgeType :: TypedGraph a b -> EdgeId -> EdgeId
-
--- | Given a TypedGraph and a Node in this graph, returns the type of the
---   Node
-
--- | <i>Deprecated: Use extractNodeType instead</i>
-getNodeType :: TypedGraph a b -> NodeId -> NodeId
+untypedGraph :: TypedGraph a b -> Graph (Maybe a) (Maybe b)
 extractNodeType :: TypedGraph a b -> NodeId -> NodeId
 extractEdgeType :: TypedGraph a b -> EdgeId -> EdgeId
 
 -- | Obtain the type graph from a typed graph
-typeGraph :: TypedGraph a b -> Graph a b
+typeGraph :: TypedGraph a b -> Graph (Maybe a) (Maybe b)
 
 -- | Test if the typed graph is empty
 null :: TypedGraph a b -> Bool
@@ -581,11 +932,20 @@ newTypedEdges :: TypedGraph a b -> [EdgeId]
 
 -- | Obtain a list of tuples <tt>(nodeId, typeId)</tt> for nodes in the
 --   graph.
-nodesWithType :: TypedGraph a b -> [(NodeId, NodeId)]
+typedNodes :: TypedGraph a b -> [(NodeId, NodeId)]
 
 -- | Obtain a list of tuples <tt>(edgeId, srcId, tgtId, typeId)</tt> for
 --   edges in the graph.
-edgesWithType :: TypedGraph a b -> [(EdgeId, NodeId, NodeId, EdgeId)]
+typedEdges :: TypedGraph a b -> [(EdgeId, NodeId, NodeId, EdgeId)]
+
+-- | Obtain the list of untyped nodes, i.e., the list of node ids from the
+--   typed graph domain
+untypedNodes :: TypedGraph a b -> [NodeId]
+
+-- | Obtain the list of untyped edges, i.e., the list of edge ids from the
+--   typed graph domain
+untypedEdges :: TypedGraph a b -> [EdgeId]
+instance Abstract.Cardinality.Cardinality (Graph.GraphMorphism.GraphMorphism a b)
 
 module Abstract.AdhesiveHLR
 class (Eq m) => Morphism m where type Obj m :: * where {
@@ -644,15 +1004,19 @@ class Morphism m => EpiPairs m where calculateCommutativeSquares inj m1 m2 = fil
 --   If the first argument is true, only pairs of monomorphisms are
 --   created. Otherwise, pairs of arbitrary morphisms are created.
 createJointlyEpimorphicPairs :: EpiPairs m => Bool -> Obj m -> Obj m -> [(m, m)]
+
+-- | Create all subobjects from the given object.
+--   
+--   If the first argument is true, only identity morphism is created.
+--   Otherwise, arbitrary (epimorphic) morphisms are created.
 createAllSubobjects :: EpiPairs m => Bool -> Obj m -> [m]
 
 -- | Create a special case of jointly epimorphic pairs, where the second
---   morphism is a Nac The first flag indicates Nac satisfability with a
---   monomorphic morphism The second flag indicates that the other morphism
---   is monomorphic
+--   morphism is a Nac. The pairs generated are dependent of the NAC
+--   config.
 --   
 --   FIXME: nacs don't belong in this module
-createJointlyEpimorphicPairsFromNAC :: EpiPairs m => DPOConfig -> Obj m -> m -> [(m, m)]
+createJointlyEpimorphicPairsFromNAC :: EpiPairs m => MorphismsConfig -> Obj m -> m -> [(m, m)]
 calculateCommutativeSquares :: EpiPairs m => Bool -> m -> m -> [(m, m)]
 calculateCommutativeSquaresAlongMonomorphism :: EpiPairs m => (m, Bool) -> (m, Bool) -> [(m, m)]
 
@@ -661,7 +1025,24 @@ calculateCommutativeSquaresAlongMonomorphism :: EpiPairs m => (m, Bool) -> (m, B
 --   
 --   Mainly provides categorical operations that AdhesiveHLR categories are
 --   guaranteed to have.
-class (Morphism m) => AdhesiveHLR m
+class (Cocomplete m) => AdhesiveHLR m where calculatePushout = calculatePushout
+
+-- | Calculate the initial pushout of the given morphism.
+--   
+--   Given the morphism <i>f : A -&gt; A'</i>, returns the morphisms <i>b :
+--   B -&gt; A</i>, <i>f' : B -&gt; C</i> and <i>c: C -&gt; A'</i> such
+--   that the following square is the initial pushout of f.
+--   
+--   <pre>
+--         f'
+--     B──────▶C
+--     │       │
+--   b │       │ c
+--     ▼       ▼
+--     A──────▶A'
+--         f
+--   </pre>
+calculateInitialPushout :: AdhesiveHLR m => m -> (m, m, m)
 
 -- | Calculate the pushout between the two given morphisms.
 --   
@@ -725,12 +1106,11 @@ hasPushoutComplement :: AdhesiveHLR m => (MorphismType, m) -> (MorphismType, m) 
 --   </pre>
 calculatePushoutComplement :: AdhesiveHLR m => m -> m -> (m, m)
 
--- | Calculate the pullback between the two given morphisms
+-- | Calculate the pullback between the two given morphisms.
 --   
---   Given two monomorphic morphisms <i>f : A -&gt; C</i> and <i>g : B
---   -&gt; C</i>, respectively, returns the pair of monomorphic morphisms
---   <i>f' : X -&gt; B</i> and <i>g': X -&gt; A</i> such that the following
---   square is a pullback.
+--   Given two morphisms <i>f : A -&gt; C</i> and <i>g : B -&gt; C</i>,
+--   respectively, returns the pair of morphisms <i>f' : X -&gt; B</i> and
+--   <i>g': X -&gt; A</i> such that the following square is a pullback.
 --   
 --   <pre>
 --         g'
@@ -741,7 +1121,7 @@ calculatePushoutComplement :: AdhesiveHLR m => m -> m -> (m, m)
 --      B──────▶C
 --         g
 --   </pre>
-monomorphicPullback :: AdhesiveHLR m => m -> m -> (m, m)
+calculatePullback :: AdhesiveHLR m => m -> m -> (m, m)
 
 -- | Flag indicating what restrictions are required or assumed of matches.
 data MatchRestriction
@@ -755,17 +1135,111 @@ matchRestrictionToMorphismType :: MatchRestriction -> MorphismType
 data NacSatisfaction
 MonomorphicNAC :: NacSatisfaction
 PartiallyMonomorphicNAC :: NacSatisfaction
-data DPOConfig
-DPOConfig :: MatchRestriction -> NacSatisfaction -> DPOConfig
-[matchRestriction] :: DPOConfig -> MatchRestriction
-[nacSatisfaction] :: DPOConfig -> NacSatisfaction
-instance GHC.Show.Show m => GHC.Show.Show (Abstract.AdhesiveHLR.AtomicConstraint m)
+data MorphismsConfig
+MorphismsConfig :: MatchRestriction -> NacSatisfaction -> MorphismsConfig
+[matchRestriction] :: MorphismsConfig -> MatchRestriction
+[nacSatisfaction] :: MorphismsConfig -> NacSatisfaction
 instance GHC.Show.Show Abstract.AdhesiveHLR.NacSatisfaction
 instance GHC.Classes.Eq Abstract.AdhesiveHLR.NacSatisfaction
 instance GHC.Show.Show Abstract.AdhesiveHLR.MatchRestriction
 instance GHC.Classes.Eq Abstract.AdhesiveHLR.MatchRestriction
-instance Abstract.Valid.Valid m => Abstract.Valid.Valid (Abstract.AdhesiveHLR.AtomicConstraint m)
-instance Abstract.Valid.Valid m => Abstract.Valid.Valid (Abstract.AdhesiveHLR.Constraint m)
+
+
+-- | A grammar is defined as a start object, a set of transformation rules,
+--   and a set of constraints for the potencial generated objects. The
+--   morphism type is kept generic.
+module Grammar.Core
+grammar :: Obj m -> [Constraint m] -> [NamedProduction m] -> Grammar m
+data Grammar m
+
+-- | Object that uses a Span of Morphisms to connect the right-hand-side of
+--   a Production with the left-hand-side of another one
+data ObjectFlow m
+ObjectFlow :: String -> String -> String -> Span m -> ObjectFlow m
+
+-- | A identifier for the Object Flow
+[index] :: ObjectFlow m -> String
+
+-- | The name of the production that will produce the input for the next
+[producer] :: ObjectFlow m -> String
+
+-- | The name of the production that uses the result of the other
+[consumer] :: ObjectFlow m -> String
+
+-- | A span of Morphisms <tt>Ri <a>IO -</a> Lo</tt> where <tt>Ri</tt> is
+--   the right-hand-side of the <tt>producer production</tt> and
+--   <tt>Lo</tt> is the left-hand-side of the <tt>consumer production</tt>
+[spanMapping] :: ObjectFlow m -> Span m
+type RuleSequence m = (String, [(String, Production m)], [ObjectFlow m])
+type NamedProduction m = (String, Production m)
+getProductionName :: NamedProduction m -> String
+getProduction :: NamedProduction m -> Production m
+start :: Grammar m -> Obj m
+constraints :: Grammar m -> [Constraint m]
+rules :: Grammar m -> [NamedProduction m]
+findProduction :: String -> Grammar m -> Maybe (Production m)
+reachableGraphs :: Grammar m -> [(String, Obj m)]
+addReachableGraphs :: [(String, Obj m)] -> Grammar m -> Grammar m
+
+module Abstract.DPO.Process
+data Process m
+Process :: [Production m] -> Obj m -> Process m
+[productions] :: Process m -> [Production m]
+[coreObject] :: Process m -> Obj m
+class (DPO m) => GenerateProcess m where calculateProcess [] = error "Can not calculate process for empty list of derivations" calculateProcess ds = let fs = sourcesCoproduct ds gs = allObjectsCoproduct ds (h1, h2, h3) = generateMorphismFamilies ds fs gs coEq = calculateNCoequalizer $ fromList [h1, h2, h3] hs = reduce $ map (`compose` coEq) gs in Process (map typing (zip ds hs)) (codomain coEq) calculateRulesColimit (_, g, os) = let ruleNames = map fst g rs = map snd g fs = ksCoproduct rs gs = allCoproduct rs h = induceSpanMorphism fs (g1s, g2s, g3s) = groupMorphisms $ split gs h1 = h $ zipWith compose (getLefts rs) g1s h2 = h g2s h3 = h $ zipWith compose (getRights rs) g3s coEq = calculateNCoequalizer $ fromList [h1, h2, h3] hm = map (`compose` coEq) gs hs1 = split hm partial = zip ruleNames hs1 leftIOs = map (\ o -> compose (snd $ spanMapping o) (fst' $ fromJust (lookup (consumer o) partial))) os rightIOs = map (\ o -> compose (fst $ spanMapping o) (thd' $ fromJust (lookup (producer o) partial))) os objCop = objectFlowCoproduct os leftFamily = induceSpanMorphism objCop leftIOs rightFamily = induceSpanMorphism objCop rightIOs coreGraphMorphism = calculateCoequalizer leftFamily rightFamily hs2 = split $ map (`compose` coreGraphMorphism) hm in if null os then zip3 ruleNames rs hs1 else zip3 ruleNames rs hs2 generateGraphProcess (_, g, os) = let colimit = calculateRulesColimit ("", g, os) ruleNames = map fst g newRules = map (productionTyping . forgetRuleName) colimit forgetRuleName (_, b, c) = (b, c) in zip ruleNames newRules
+
+-- | Given a pair of morhisms with common codomain, it returns a new pair
+--   with morphism also with a a new codomain that does not contain the
+--   elements that were orphans in both original morphisms
+restrictMorphisms :: GenerateProcess m => (m, m) -> (m, m)
+
+-- | Given a morhism, it returns a morphism with a new codomain that is
+--   equal to the image of the original morphism
+restrictMorphism :: GenerateProcess m => m -> m
+
+-- | Given a Derivation <tt>d</tt> and a tuple <tt>(p,q,r)</tt> of
+--   Morphisms <tt>p : G -&gt; C</tt>, <tt>q : D -&gt; C</tt> and <tt>r : H
+--   -&gt; C</tt>, it returns a new Production corresponding to the
+--   production in <tt>d</tt> but typed over C
+typing :: GenerateProcess m => (Derivation m, (m, m, m)) -> Production m
+
+-- | Given a Production <tt>p</tt> and a tuple <tt>(r,s,t)</tt> of
+--   Morphisms <tt>r : G -&gt; C</tt>, <tt>s : D -&gt; C</tt> and <tt>t : H
+--   -&gt; C</tt>, it returns a new Production corresponding to the
+--   production in <tt>p</tt> but typed over C
+productionTyping :: GenerateProcess m => (Production m, (m, m, m)) -> Production m
+
+-- | Given a list of Derivation containing a sequential derivation, returns
+--   its corresponding Process
+calculateProcess :: GenerateProcess m => [Derivation m] -> Process m
+calculateRulesColimit :: GenerateProcess m => RuleSequence m -> [NamedRuleWithMatches m]
+generateGraphProcess :: GenerateProcess m => RuleSequence m -> [(String, Production m)]
+type NamedRuleWithMatches m = (String, Production m, (m, m, m))
+data Interaction
+Interaction :: String -> String -> InteractionType -> Maybe Int -> Interaction
+[firstRule] :: Interaction -> String
+[secondRule] :: Interaction -> String
+[interactionType] :: Interaction -> InteractionType
+[nacInvolved] :: Interaction -> Maybe Int
+data InteractionType
+DeleteUse :: InteractionType
+ProduceForbid :: InteractionType
+ProduceUse :: InteractionType
+DeleteForbid :: InteractionType
+getRule :: NamedRuleWithMatches m -> Production m
+getName :: NamedRuleWithMatches m -> String
+getMatch :: NamedRuleWithMatches m -> m
+getComatch :: NamedRuleWithMatches m -> m
+filterInducedByNacs :: [Interaction] -> Set Interaction
+eliminateSelfConflictsAndDependencies :: [Interaction] -> [Interaction]
+instance GHC.Classes.Ord Abstract.DPO.Process.Interaction
+instance GHC.Show.Show Abstract.DPO.Process.Interaction
+instance GHC.Classes.Eq Abstract.DPO.Process.Interaction
+instance GHC.Classes.Ord Abstract.DPO.Process.InteractionType
+instance GHC.Show.Show Abstract.DPO.Process.InteractionType
+instance GHC.Classes.Eq Abstract.DPO.Process.InteractionType
+instance (GHC.Classes.Eq m, GHC.Classes.Eq (Abstract.Morphism.Obj m)) => GHC.Classes.Eq (Abstract.DPO.Process.Process m)
+instance (GHC.Show.Show m, GHC.Show.Show (Abstract.Morphism.Obj m)) => GHC.Show.Show (Abstract.DPO.Process.Process m)
 
 
 -- | Provides definitions for the Double-Pushout approach to High-Level
@@ -794,10 +1268,55 @@ getRHS :: Production m -> m
 
 -- | Returns the set of nacs <i>L -&gt; Ni</i> of the given production
 getNACs :: Production m -> [m]
-data DPOConfig
-DPOConfig :: MatchRestriction -> NacSatisfaction -> DPOConfig
-[matchRestriction] :: DPOConfig -> MatchRestriction
-[nacSatisfaction] :: DPOConfig -> NacSatisfaction
+data Derivation m
+Derivation :: Production m -> m -> m -> m -> m -> m -> Derivation m
+[production] :: Derivation m -> Production m
+[match] :: Derivation m -> m
+[comatch] :: Derivation m -> m
+[gluing] :: Derivation m -> m
+[dToG] :: Derivation m -> m
+[dToH] :: Derivation m -> m
+
+-- | Given a match <tt>m</tt> and a production <tt>p</tt>, it returns
+--   <tt>Just d</tt>, where <tt>d</tt> is the corresponding Derivation if
+--   <tt>m</tt> satisfies the rewriting conditions, or <tt>Nothing</tt>.
+generateDerivation :: (DPO m) => MorphismsConfig -> m -> Production m -> Maybe (Derivation m)
+data Process m
+Process :: [Production m] -> Obj m -> Process m
+[productions] :: Process m -> [Production m]
+[coreObject] :: Process m -> Obj m
+class (DPO m) => GenerateProcess m where calculateProcess [] = error "Can not calculate process for empty list of derivations" calculateProcess ds = let fs = sourcesCoproduct ds gs = allObjectsCoproduct ds (h1, h2, h3) = generateMorphismFamilies ds fs gs coEq = calculateNCoequalizer $ fromList [h1, h2, h3] hs = reduce $ map (`compose` coEq) gs in Process (map typing (zip ds hs)) (codomain coEq) calculateRulesColimit (_, g, os) = let ruleNames = map fst g rs = map snd g fs = ksCoproduct rs gs = allCoproduct rs h = induceSpanMorphism fs (g1s, g2s, g3s) = groupMorphisms $ split gs h1 = h $ zipWith compose (getLefts rs) g1s h2 = h g2s h3 = h $ zipWith compose (getRights rs) g3s coEq = calculateNCoequalizer $ fromList [h1, h2, h3] hm = map (`compose` coEq) gs hs1 = split hm partial = zip ruleNames hs1 leftIOs = map (\ o -> compose (snd $ spanMapping o) (fst' $ fromJust (lookup (consumer o) partial))) os rightIOs = map (\ o -> compose (fst $ spanMapping o) (thd' $ fromJust (lookup (producer o) partial))) os objCop = objectFlowCoproduct os leftFamily = induceSpanMorphism objCop leftIOs rightFamily = induceSpanMorphism objCop rightIOs coreGraphMorphism = calculateCoequalizer leftFamily rightFamily hs2 = split $ map (`compose` coreGraphMorphism) hm in if null os then zip3 ruleNames rs hs1 else zip3 ruleNames rs hs2 generateGraphProcess (_, g, os) = let colimit = calculateRulesColimit ("", g, os) ruleNames = map fst g newRules = map (productionTyping . forgetRuleName) colimit forgetRuleName (_, b, c) = (b, c) in zip ruleNames newRules
+
+-- | Given a pair of morhisms with common codomain, it returns a new pair
+--   with morphism also with a a new codomain that does not contain the
+--   elements that were orphans in both original morphisms
+restrictMorphisms :: GenerateProcess m => (m, m) -> (m, m)
+
+-- | Given a morhism, it returns a morphism with a new codomain that is
+--   equal to the image of the original morphism
+restrictMorphism :: GenerateProcess m => m -> m
+
+-- | Given a Derivation <tt>d</tt> and a tuple <tt>(p,q,r)</tt> of
+--   Morphisms <tt>p : G -&gt; C</tt>, <tt>q : D -&gt; C</tt> and <tt>r : H
+--   -&gt; C</tt>, it returns a new Production corresponding to the
+--   production in <tt>d</tt> but typed over C
+typing :: GenerateProcess m => (Derivation m, (m, m, m)) -> Production m
+
+-- | Given a Production <tt>p</tt> and a tuple <tt>(r,s,t)</tt> of
+--   Morphisms <tt>r : G -&gt; C</tt>, <tt>s : D -&gt; C</tt> and <tt>t : H
+--   -&gt; C</tt>, it returns a new Production corresponding to the
+--   production in <tt>p</tt> but typed over C
+productionTyping :: GenerateProcess m => (Production m, (m, m, m)) -> Production m
+
+-- | Given a list of Derivation containing a sequential derivation, returns
+--   its corresponding Process
+calculateProcess :: GenerateProcess m => [Derivation m] -> Process m
+calculateRulesColimit :: GenerateProcess m => RuleSequence m -> [NamedRuleWithMatches m]
+generateGraphProcess :: GenerateProcess m => RuleSequence m -> [(String, Production m)]
+data MorphismsConfig
+MorphismsConfig :: MatchRestriction -> NacSatisfaction -> MorphismsConfig
+[matchRestriction] :: MorphismsConfig -> MatchRestriction
+[nacSatisfaction] :: MorphismsConfig -> NacSatisfaction
 
 -- | Flag indicating what restrictions are required or assumed of matches.
 data MatchRestriction
@@ -819,12 +1338,12 @@ class (AdhesiveHLR m, FindMorphism m) => DPO m
 -- | Inverts a production, adjusting the NACs accordingly. Needs
 --   information of nac injective satisfaction (in second order) and
 --   matches injective.
-invertProduction :: DPO m => DPOConfig -> Production m -> Production m
+invertProduction :: DPO m => MorphismsConfig -> Production m -> Production m
 
 -- | Given a production <i>L ←l- K -r→ R</i> and a NAC morphism <i>n : L
 --   -&gt; N</i>, obtain a set of NACs <i>n'i : R -&gt; N'i</i> that is
 --   equivalent to the original NAC.
-shiftNacOverProduction :: DPO m => DPOConfig -> Production m -> m -> [m]
+shiftNacOverProduction :: DPO m => MorphismsConfig -> Production m -> m -> [m]
 
 -- | Check if the second morphism is monomorphic outside the image of the
 --   first morphism.
@@ -832,31 +1351,31 @@ isPartiallyMonomorphic :: DPO m => m -> m -> Bool
 
 -- | Verifies if the gluing conditions for a production <i>p</i> are
 --   satisfied by a match <i>m</i>
-satisfiesGluingConditions :: DPO m => DPOConfig -> Production m -> m -> Bool
+satisfiesGluingConditions :: DPO m => MorphismsConfig -> Production m -> m -> Bool
 
 -- | True if the given match satisfies all NACs of the given production.
-satisfiesNACs :: DPO m => DPOConfig -> Production m -> m -> Bool
+satisfiesNACs :: DPO m => MorphismsConfig -> Production m -> m -> Bool
 
 -- | True if the given match satisfies the gluing condition and NACs of the
 --   given production.
-satisfiesRewritingConditions :: DPO m => DPOConfig -> Production m -> m -> Bool
+satisfiesRewritingConditions :: DPO m => MorphismsConfig -> Production m -> m -> Bool
 
 -- | Check gluing conditions and the NACs satisfaction for a pair of
 --   matches <tt>inj</tt> only indicates if the match is injective, this
 --   function does not checks it
-satisfyRewritingConditions :: DPO m => DPOConfig -> (Production m, m) -> (Production m, m) -> Bool
+satisfyRewritingConditions :: DPO m => MorphismsConfig -> (Production m, m) -> (Production m, m) -> Bool
 
 -- | Obtain all matches from the production into the given object, even if
 --   they aren't applicable.
 --   
 --   When given <a>MonoMatches</a>, only obtains monomorphic matches.
-findAllMatches :: (DPO m) => DPOConfig -> Production m -> Obj m -> [m]
+findAllMatches :: (DPO m) => MorphismsConfig -> Production m -> Obj m -> [m]
 
 -- | Obtain the matches from the production into the given object that
 --   satisfiy the NACs and gluing conditions.
 --   
 --   When given <a>MonoMatches</a>, only obtains monomorphic matches.
-findApplicableMatches :: (DPO m) => DPOConfig -> Production m -> Obj m -> [m]
+findApplicableMatches :: (DPO m) => MorphismsConfig -> Production m -> Obj m -> [m]
 
 -- | Given a match and a production, calculates the double-pushout diagram
 --   for the corresponding transformation.
@@ -913,11 +1432,7 @@ invertProductionWithoutNacs :: Production m -> Production m
 -- | Given a morphism <i>m : L -&gt; L'</i> and a NAC <i>n : L -&gt; N</i>,
 --   obtains an equivalent set of NACs <i>n'i : L' -&gt; N'i</i> that is
 --   equivalent to the original NAC.
-nacDownwardShift :: EpiPairs m => DPOConfig -> m -> m -> [m]
-instance GHC.Read.Read m => GHC.Read.Read (Abstract.DPO.Production m)
-instance GHC.Show.Show m => GHC.Show.Show (Abstract.DPO.Production m)
-instance GHC.Classes.Eq m => GHC.Classes.Eq (Abstract.DPO.Production m)
-instance (Abstract.Morphism.Morphism m, Abstract.Valid.Valid m, GHC.Classes.Eq (Abstract.Morphism.Obj m)) => Abstract.Valid.Valid (Abstract.DPO.Production m)
+nacDownwardShift :: EpiPairs m => MorphismsConfig -> m -> m -> [m]
 
 
 -- | A High-Level Replacement (HLR) system, along with a starting state,
@@ -942,7 +1457,7 @@ data StateSpace m
 
 -- | An empty state space for the HLR system defined by the given
 --   productions, with the given configuration of the DPO semantics.
-empty :: DPOConfig -> [Production m] -> [(String, Production m)] -> StateSpace m
+empty :: MorphismsConfig -> [Production m] -> [(String, Production m)] -> StateSpace m
 
 -- | Obtain the set of (explored) indexed states in a state space.
 states :: StateSpace m -> IntMap (State m)
@@ -979,7 +1494,7 @@ evalStateSpaceBuilder :: StateSpaceBuilder m a -> StateSpace m -> a
 execStateSpaceBuilder :: StateSpaceBuilder m a -> StateSpace m -> StateSpace m
 
 -- | Gets the configuration of DPO semantics for this builder.
-getDpoConfig :: StateSpaceBuilder m DPOConfig
+getDpoConfig :: StateSpaceBuilder m MorphismsConfig
 
 -- | Gets the productions of the HLR system being explored in this builder.
 getProductions :: StateSpaceBuilder m [Production m]
@@ -1011,6 +1526,102 @@ instance Control.Monad.State.Class.MonadState (Abstract.DPO.StateSpace.StateSpac
 instance GHC.Base.Monad (Abstract.DPO.StateSpace.StateSpaceBuilder m)
 instance GHC.Base.Applicative (Abstract.DPO.StateSpace.StateSpaceBuilder m)
 instance GHC.Base.Functor (Abstract.DPO.StateSpace.StateSpaceBuilder m)
+
+module Analysis.CriticalPairs
+
+-- | Data representing the type of a <a>CriticalPair</a>
+data CriticalPairType
+FreeOverlap :: CriticalPairType
+DeleteUse :: CriticalPairType
+ProduceForbid :: CriticalPairType
+ProduceDangling :: CriticalPairType
+
+-- | A Critical Pair is defined as two matches (m1,m2) from the left side
+--   of their rules to a same graph. It assumes that the derivation of the
+--   rule with match <tt>m1</tt> causes a conflict with the rule with match
+--   <tt>m2</tt>
+--   
+--   This diagram shows graphs and morphisms names used in the algorithms
+--   below
+--   
+--   p1 = production (L1,K1,R1,[N1])
+--   
+--   p2 = production (L2,K2,R2,[N2])
+--   
+--   <pre>
+--                     N1    N2
+--                     ^      ^
+--           r     l   │      │n
+--      R1◀─────K1────▶L1    L2◀────K2─────▶R2
+--      │       │       \   /       │       │
+--   m1'│      k│      m1\ /m2      │       │
+--      ▼       ▼         ▼         ▼       ▼
+--      P1◀─────D1───────▶G◀───────D2──────▶P2
+--          r'       l'
+--   </pre>
+--   
+--   m2' :: from L2 to P1
+--   
+--   h21 :: from L2 to D1
+--   
+--   q21 (nacMatch) :: from N2 to P1
+data CriticalPair m
+CriticalPair :: (m, m) -> Maybe (m, m) -> Maybe (m, Int) -> CriticalPairType -> CriticalPair m
+[matches] :: CriticalPair m -> (m, m)
+[comatches] :: CriticalPair m -> Maybe (m, m)
+[nacMatch] :: CriticalPair m -> Maybe (m, Int)
+[cpType] :: CriticalPair m -> CriticalPairType
+
+-- | Returns the matches (m1,m2)
+getCriticalPairMatches :: CriticalPair m -> (m, m)
+
+-- | Returns the comatches (m1',m2')
+getCriticalPairComatches :: CriticalPair m -> Maybe (m, m)
+
+-- | Returns the nac index of a <a>CriticalPair</a>
+getNacIndexOfCriticalPair :: CriticalPair m -> Maybe Int
+
+-- | Returns the nac match of a <a>CriticalPair</a>
+getNacMatchOfCriticalPair :: CriticalPair m -> Maybe m
+
+-- | Returns the type of a Critical Pair
+getCriticalPairType :: CriticalPair m -> CriticalPairType
+
+-- | Finds all Critical Pairs between two given Productions
+findCriticalPairs :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalPair m]
+
+-- | Returns a list of morphisms from left side of rules to all valid
+--   overlapping pairs
+findPotentialCriticalPairs :: (DPO m, EpiPairs m) => MorphismsConfig -> Production m -> Production m -> [(m, m)]
+
+-- | Returns the Critical Pairs with rule names
+namedCriticalPairs :: (EpiPairs m, DPO m) => MorphismsConfig -> [NamedRule m] -> [NamedCriticalPairs m]
+
+-- | All DeleteUse caused by the derivation of <tt>p1</tt> before
+--   <tt>p2</tt>. It occurs when <tt>p1</tt> deletes something used by
+--   <tt>p2</tt>.
+findAllDeleteUse :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalPair m]
+
+-- | All ProduceForbid caused by the derivation of <tt>p1</tt> before
+--   <tt>p2</tt>.
+--   
+--   Rule <tt>p1</tt> causes a produce-forbid conflict with <tt>p2</tt> if
+--   some NAC in <tt>p2</tt> fails to be satisfied after the aplication of
+--   <tt>p1</tt>.
+findAllProduceForbid :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalPair m]
+
+-- | All ProduceDangling caused by the derivation of <tt>p1</tt> before
+--   <tt>p2</tt>. It occurs when <tt>p1</tt> creates something that unable
+--   <tt>p2</tt>.
+findAllProduceDangling :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalPair m]
+
+-- | Tests DeleteUse and ProduceDangling for the same pairs, more efficient
+--   than deal separately.
+findAllDeleteUseAndProduceDangling :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalPair m]
+instance GHC.Show.Show m => GHC.Show.Show (Analysis.CriticalPairs.CriticalPair m)
+instance GHC.Classes.Eq m => GHC.Classes.Eq (Analysis.CriticalPairs.CriticalPair m)
+instance GHC.Show.Show Analysis.CriticalPairs.CriticalPairType
+instance GHC.Classes.Eq Analysis.CriticalPairs.CriticalPairType
 
 module Analysis.CriticalSequence
 
@@ -1066,59 +1677,6 @@ ForbidProduce :: CriticalSequenceType
 --   q21 (nacMatch) :: from N2 to P1
 data CriticalSequence m
 
--- | Given two productions <tt>p1</tt> and <tt>p2</tt>, finds the Critical
---   sequences in which the application of <tt>p1</tt> enables the
---   application of <tt>p2</tt>
-findTriggeringCriticalSequences :: (EpiPairs m, DPO m) => DPOConfig -> Production m -> Production m -> [CriticalSequence m]
-
--- | Returns the Critical Sequences with rule names
-namedCriticalSequences :: (EpiPairs m, DPO m) => DPOConfig -> [NamedRule m] -> [NamedCriticalPairs m]
-
--- | All ProduceUse caused by the derivation of <tt>l</tt> before
---   <tt>r</tt>.
---   
---   Rule <tt>p1</tt> causes a produce-use dependency with <tt>p2</tt> if
---   rule <tt>p1</tt> creates something that is used by <tt>p2</tt>. Verify
---   the non existence of h21: L2 -&gt; D1 such that d1 . h21 = m2'.
-findAllProduceUse :: (DPO m, EpiPairs m) => DPOConfig -> Production m -> Production m -> [CriticalSequence m]
-
--- | All RemoveDangling caused by the derivation of <tt>p1</tt> before
---   <tt>p2</tt>.
---   
---   Rule <tt>p1</tt> causes a remove-dangling dependency with <tt>p2</tt>
---   if rule <tt>p1</tt> deletes something that enables <tt>p2</tt>.
-findAllRemoveDangling :: (EpiPairs m, DPO m) => DPOConfig -> Production m -> Production m -> [CriticalSequence m]
-
--- | All DeleteForbid caused by the derivation of <tt>p1</tt> before
---   <tt>r</tt>. Rule <tt>p1</tt> causes a delete-forbid dependency with
---   <tt>p2</tt> if some NAC in <tt>p2</tt> turns satisfied after the
---   aplication of <tt>p1</tt>
-findAllDeleteForbid :: (DPO m, EpiPairs m) => DPOConfig -> Production m -> Production m -> [CriticalSequence m]
-
--- | All DeliverDelete caused by the derivation of <tt>p1</tt> before
---   <tt>r</tt>.
---   
---   Rule <tt>p1</tt> causes a deliver-delete dependency with <tt>p2</tt>
---   if rule <tt>p2</tt> deletes something that is used by <tt>p2</tt>,
---   Verify the non existence of h12: L1 -&gt; D2 such that d2 . h12 = m1'.
-findAllDeliverDelete :: (DPO m, EpiPairs m) => DPOConfig -> Production m -> Production m -> [CriticalSequence m]
-
--- | All ForbidProduce caused by the derivation of <tt>p1</tt> before
---   <tt>p2</tt>.
---   
---   Rule <tt>p1</tt> causes a forbid-produce dependency with <tt>p2</tt>
---   if some NAC in right of <tt>p1</tt> turns satisfied after the
---   aplication of <tt>p2</tt>.
-findAllForbidProduce :: (DPO m, EpiPairs m) => DPOConfig -> Production m -> Production m -> [CriticalSequence m]
-
--- | All DeliverDangling caused by the derivation of <tt>p1</tt> before
---   <tt>p2</tt>.
---   
---   Rule <tt>p1</tt> causes a deliver-delete dependency with <tt>p2</tt>
---   if rule <tt>p2</tt> creates something that disables the inverse of
---   <tt>p1</tt>.
-findAllDeliverDangling :: (DPO m, EpiPairs m) => DPOConfig -> Production m -> Production m -> [CriticalSequence m]
-
 -- | Returns the matches (m1, m2)
 getCriticalSequenceMatches :: CriticalSequence m -> Maybe (m, m)
 
@@ -1133,6 +1691,63 @@ getNacIndexOfCriticalSequence :: CriticalSequence m -> Maybe Int
 
 -- | Returns the type of a <a>CriticalSequence</a>
 getCriticalSequenceType :: CriticalSequence m -> CriticalSequenceType
+
+-- | Given two productions <tt>p1</tt> and <tt>p2</tt>, finds the Critical
+--   sequences in which the application of <tt>p1</tt> enables the
+--   application of <tt>p2</tt>
+findTriggeringCriticalSequences :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalSequence m]
+
+-- | Returns the Critical Sequences with rule names
+namedCriticalSequences :: (EpiPairs m, DPO m) => MorphismsConfig -> [NamedRule m] -> [NamedCriticalPairs m]
+
+-- | All ProduceUse caused by the derivation of <tt>l</tt> before
+--   <tt>r</tt>.
+--   
+--   Rule <tt>p1</tt> causes a produce-use dependency with <tt>p2</tt> if
+--   rule <tt>p1</tt> creates something that is used by <tt>p2</tt>. Verify
+--   the non existence of h21: L2 -&gt; D1 such that d1 . h21 = m2'.
+findAllProduceUse :: (DPO m, EpiPairs m) => MorphismsConfig -> Production m -> Production m -> [CriticalSequence m]
+
+-- | All RemoveDangling caused by the derivation of <tt>p1</tt> before
+--   <tt>p2</tt>.
+--   
+--   Rule <tt>p1</tt> causes a remove-dangling dependency with <tt>p2</tt>
+--   if rule <tt>p1</tt> deletes something that enables <tt>p2</tt>.
+findAllRemoveDangling :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalSequence m]
+
+-- | All DeleteForbid caused by the derivation of <tt>p1</tt> before
+--   <tt>r</tt>. Rule <tt>p1</tt> causes a delete-forbid dependency with
+--   <tt>p2</tt> if some NAC in <tt>p2</tt> turns satisfied after the
+--   aplication of <tt>p1</tt>
+findAllDeleteForbid :: (DPO m, EpiPairs m) => MorphismsConfig -> Production m -> Production m -> [CriticalSequence m]
+
+-- | All DeliverDelete caused by the derivation of <tt>p1</tt> before
+--   <tt>r</tt>.
+--   
+--   Rule <tt>p1</tt> causes a deliver-delete dependency with <tt>p2</tt>
+--   if rule <tt>p2</tt> deletes something that is used by <tt>p2</tt>,
+--   Verify the non existence of h12: L1 -&gt; D2 such that d2 . h12 = m1'.
+findAllDeliverDelete :: (DPO m, EpiPairs m) => MorphismsConfig -> Production m -> Production m -> [CriticalSequence m]
+
+-- | All ForbidProduce caused by the derivation of <tt>p1</tt> before
+--   <tt>p2</tt>.
+--   
+--   Rule <tt>p1</tt> causes a forbid-produce dependency with <tt>p2</tt>
+--   if some NAC in right of <tt>p1</tt> turns satisfied after the
+--   aplication of <tt>p2</tt>.
+findAllForbidProduce :: (DPO m, EpiPairs m) => MorphismsConfig -> Production m -> Production m -> [CriticalSequence m]
+
+-- | All DeliverDangling caused by the derivation of <tt>p1</tt> before
+--   <tt>p2</tt>.
+--   
+--   Rule <tt>p1</tt> causes a deliver-delete dependency with <tt>p2</tt>
+--   if rule <tt>p2</tt> creates something that disables the inverse of
+--   <tt>p1</tt>.
+findAllDeliverDangling :: (DPO m, EpiPairs m) => MorphismsConfig -> Production m -> Production m -> [CriticalSequence m]
+
+-- | Tests ProduceUse and RemoveDangling for the same pairs, more efficient
+--   than deal separately.
+findAllProduceUseAndRemoveDangling :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalSequence m]
 instance GHC.Show.Show m => GHC.Show.Show (Analysis.CriticalSequence.CriticalSequence m)
 instance GHC.Classes.Eq m => GHC.Classes.Eq (Analysis.CriticalSequence.CriticalSequence m)
 instance GHC.Show.Show Analysis.CriticalSequence.CriticalSequenceType
@@ -1143,110 +1758,55 @@ data CRDependencies
 AllOverlapings :: CRDependencies
 OnlyDependency :: CRDependencies
 
--- | Generates the Concurrent Rules for a given list of GraphRules
+-- | Generates the Concurrent Rules for a given list of Productions
 --   following the order of the elements in the list.
-allConcurrentRules :: (DPO m, EpiPairs m, Eq (Obj m), Valid m) => CRDependencies -> DPOConfig -> [AtomicConstraint m] -> [Production m] -> [Production m]
+allConcurrentRules :: (DPO m, EpiPairs m, Eq (Obj m), Valid m) => CRDependencies -> MorphismsConfig -> [Constraint m] -> [Production m] -> [Production m]
 
--- | Generates the Concurrent Rule with the least disjoint EpiPair for a
---   given list of GraphRules (following the order of the elements in the
---   list).
-maxConcurrentRule :: (DPO m, EpiPairs m, Eq (Obj m), Valid m) => CRDependencies -> DPOConfig -> [AtomicConstraint m] -> [Production m] -> Maybe (Production m)
+-- | Generates the Concurrent Rules with the least disjoint EpiPairs
+--   (EpiPairs with the least cardinality) for a given list of Productions
+--   (following the order of the elements in the list).
+maxConcurrentRules :: (DPO m, EpiPairs m, Eq (Obj m), Valid m, Cardinality (Obj m)) => CRDependencies -> MorphismsConfig -> [Constraint m] -> [Production m] -> [Production m]
 
-module Analysis.CriticalPairs
+module Analysis.EssentialCriticalPairs
 
--- | Data representing the type of a <a>CriticalPair</a>
-data CriticalPairType
-FreeOverlap :: CriticalPairType
-DeleteUse :: CriticalPairType
-ProduceForbid :: CriticalPairType
-ProduceDangling :: CriticalPairType
+-- | Returns the Essential Critical Pairs with rule names
+namedEssentialCriticalPairs :: (EpiPairs m, DPO m) => MorphismsConfig -> [NamedRule m] -> [NamedCriticalPairs m]
 
--- | A Critical Pair is defined as two matches (m1,m2) from the left side
---   of their rules to a same graph. It assumes that the derivation of the
---   rule with match <tt>m1</tt> causes a conflict with the rule with match
---   <tt>m2</tt>
---   
---   This diagram shows graphs and morphisms names used in the algorithms
---   below
---   
---   p1 = production (L1,K1,R1,[N1])
---   
---   p2 = production (L2,K2,R2,[N2])
---   
---   <pre>
---                     N1    N2
---                     ^      ^
---           r     l   │      │n
---      R1◀─────K1────▶L1    L2◀────K2─────▶R2
---      │       │       \   /       │       │
---   m1'│      k│      m1\ /m2      │       │
---      ▼       ▼         ▼         ▼       ▼
---      P1◀─────D1───────▶G◀───────D2──────▶P2
---          r'       l'
---   </pre>
---   
---   m2' :: from L2 to P1
---   
---   h21 :: from L2 to D1
---   
---   q21 (nacMatch) :: from N2 to P1
-data CriticalPair m
+-- | Get all essential delete-use and organize them in a list of
+--   <a>CriticalPair</a>.
+findAllEssentialDeleteUse :: (EpiPairs m, DPO m) => MorphismsConfig -> Production m -> Production m -> [CriticalPair m]
+findAllEssentialProduceForbid :: MorphismsConfig -> Production m -> Production m -> [CriticalPair m]
+findAllEssentialProduceDangling :: MorphismsConfig -> Production m -> Production m -> [CriticalPair m]
 
--- | Finds all Critical Pairs between two given Productions
-findCriticalPairs :: (EpiPairs m, DPO m) => DPOConfig -> Production m -> Production m -> [CriticalPair m]
+module Analysis.ParallelIndependent
+data Algorithm
+DeleteUse :: Algorithm
+Pullback :: Algorithm
+data IndependenceType
+Parallel :: IndependenceType
+Sequentially :: IndependenceType
 
--- | Returns the Critical Pairs with rule names
-namedCriticalPairs :: (EpiPairs m, DPO m) => DPOConfig -> [NamedRule m] -> [NamedCriticalPairs m]
+-- | Checks if two transformations are independent (just delete-use), works
+--   with delete-use or pullback checking.
+isIndependent :: (EpiPairs m, DPO m) => IndependenceType -> Algorithm -> MorphismsConfig -> Production m -> Production m -> Bool
 
--- | All DeleteUse caused by the derivation of <tt>p1</tt> before
---   <tt>p2</tt>. It occurs when <tt>p1</tt> deletes something used by
---   <tt>p2</tt>.
-findAllDeleteUse :: (EpiPairs m, DPO m) => DPOConfig -> Production m -> Production m -> [CriticalPair m]
+-- | Checks independence between transformations via pullback tests
+pbTest :: (AdhesiveHLR m, FindMorphism m) => Production m -> Production m -> m -> m -> Bool
+findIsoFromDomains :: FindMorphism m => m -> m -> [m]
+instance GHC.Show.Show Analysis.ParallelIndependent.IndependenceType
+instance GHC.Classes.Eq Analysis.ParallelIndependent.IndependenceType
 
--- | All ProduceForbid caused by the derivation of <tt>p1</tt> before
---   <tt>p2</tt>.
---   
---   Rule <tt>p1</tt> causes a produce-forbid conflict with <tt>p2</tt> if
---   some NAC in <tt>p2</tt> fails to be satisfied after the aplication of
---   <tt>p1</tt>.
-findAllProduceForbid :: (EpiPairs m, DPO m) => DPOConfig -> Production m -> Production m -> [CriticalPair m]
-
--- | All ProduceDangling caused by the derivation of <tt>p1</tt> before
---   <tt>p2</tt>. It occurs when <tt>p1</tt> creates something that unable
---   <tt>p2</tt>.
-findAllProduceDangling :: (EpiPairs m, DPO m) => DPOConfig -> Production m -> Production m -> [CriticalPair m]
-
--- | Returns the matches (m1,m2)
-getCriticalPairMatches :: CriticalPair m -> (m, m)
-
--- | Returns the comatches (m1',m2')
-getCriticalPairComatches :: CriticalPair m -> Maybe (m, m)
-
--- | Returns the nac index of a <a>CriticalPair</a>
-getNacIndexOfCriticalPair :: CriticalPair m -> Maybe Int
-
--- | Returns the nac match of a <a>CriticalPair</a>
-getNacMatchOfCriticalPair :: CriticalPair m -> Maybe m
-
--- | Returns the type of a Critical Pair
-getCriticalPairType :: CriticalPair m -> CriticalPairType
-
--- | Rule <tt>p1</tt> is in a delete-use conflict with <tt>p2</tt> if
---   <tt>p1</tt> deletes something that is used by <tt>p2</tt>.
---   
---   Verifies the non existence of h21: L2 -&gt; D1 such that d1 . h21 = m2
-isDeleteUse :: DPO m => DPOConfig -> Production m -> (m, m) -> Bool
-instance GHC.Show.Show m => GHC.Show.Show (Analysis.CriticalPairs.CriticalPair m)
-instance GHC.Classes.Eq m => GHC.Classes.Eq (Analysis.CriticalPairs.CriticalPair m)
-instance GHC.Show.Show Analysis.CriticalPairs.CriticalPairType
-instance GHC.Classes.Eq Analysis.CriticalPairs.CriticalPairType
+module Analysis.Processes
+generateGraphProcess :: GenerateProcess m => RuleSequence m -> [(String, Production m)]
+calculateRulesColimit :: GenerateProcess m => RuleSequence m -> [NamedRuleWithMatches m]
+findConflictsAndDependencies :: GenerateProcess m => [NamedRuleWithMatches m] -> [Interaction]
 
 module TypedGraph.Morphism
 data TypedGraphMorphism a b
 
--- | Creates a TypedGraphMorphism mapping the same elements of theirs
---   codomains, from <tt>tgm1</tt> to <tt>tgm2</tt>
-idMap :: GraphMorphism a b -> GraphMorphism a b -> TypedGraphMorphism a b
+-- | Creates a TypedGraphMorphism mapping nodes and edges according to
+--   their identifiers.
+idMap :: TypedGraph a b -> TypedGraph a b -> TypedGraphMorphism a b
 
 -- | Test if a <tt>nac</tt> is partial injective (injective out of
 --   <tt>m</tt>)
@@ -1255,26 +1815,35 @@ isPartialInjective :: TypedGraphMorphism a b -> TypedGraphMorphism a b -> Bool
 -- | Invert a typed graph morphism
 invert :: TypedGraphMorphism a b -> TypedGraphMorphism a b
 
--- | Return the nodes in the domain of a given <tt>TypedGraphMorphism</tt>
-nodesFromDomain :: TypedGraphMorphism a b -> [NodeId]
+-- | Return the nodes ids in the domain of a given
+--   <tt>TypedGraphMorphism</tt>
+nodeIdsFromDomain :: TypedGraphMorphism a b -> [NodeId]
+
+-- | Return the edges ids in the domain of a given
+--   <tt>TypedGraphMorphism</tt>
+edgeIdsFromDomain :: TypedGraphMorphism a b -> [EdgeId]
 
 -- | Return the edges in the domain of a given <tt>TypedGraphMorphism</tt>
-edgesFromDomain :: TypedGraphMorphism a b -> [EdgeId]
+edgesFromDomain :: TypedGraphMorphism a b -> [Edge (Maybe b)]
 
--- | Return the nodes in the codomain of a given
+-- | Return the nodes ids in the codomain of a given
 --   <tt>TypedGraphMorphism</tt>
-nodesFromCodomain :: TypedGraphMorphism a b -> [NodeId]
+nodeIdsFromCodomain :: TypedGraphMorphism a b -> [NodeId]
+
+-- | Return the edges ids in the codomain of a given
+--   <tt>TypedGraphMorphism</tt>
+edgeIdsFromCodomain :: TypedGraphMorphism a b -> [EdgeId]
 
 -- | Return the edges in the codomain of a given
 --   <tt>TypedGraphMorphism</tt>
-edgesFromCodomain :: TypedGraphMorphism a b -> [EdgeId]
+edgesFromCodomain :: TypedGraphMorphism a b -> [Edge (Maybe b)]
 
 -- | Return the domain graph
-graphDomain :: TypedGraphMorphism a b -> Graph a b
+graphDomain :: TypedGraphMorphism a b -> Graph (Maybe a) (Maybe b)
 
 -- | Return the codomain graph
-graphCodomain :: TypedGraphMorphism a b -> Graph a b
-mapping :: TypedGraphMorphism a b -> GraphMorphism a b
+graphCodomain :: TypedGraphMorphism a b -> Graph (Maybe a) (Maybe b)
+mapping :: TypedGraphMorphism a b -> GraphMorphism (Maybe a) (Maybe b)
 
 -- | Given a TypedGraphMorphism <tt><i><b>t</b>: G1 -&gt; G2</i></tt> and a
 --   node <tt><b>n</b></tt> in <tt>G1</tt>, it returns the node in
@@ -1289,7 +1858,7 @@ applyEdge :: TypedGraphMorphism a b -> EdgeId -> Maybe EdgeId
 -- | Given two <tt>TypedGraph</tt>s <tt>G1</tt> and <tt>G2</tt> and a
 --   simple <tt>GraphMorphism</tt> between them, it returns a
 --   <tt>TypedGraphMorphism</tt> from <tt>G1</tt> to <tt>G2</tt>
-buildTypedGraphMorphism :: TypedGraph a b -> TypedGraph a b -> GraphMorphism a b -> TypedGraphMorphism a b
+buildTypedGraphMorphism :: TypedGraph a b -> TypedGraph a b -> GraphMorphism (Maybe a) (Maybe b) -> TypedGraphMorphism a b
 
 -- | TODO: Find a better name for this function, that was repeated both
 --   here and in the GraphRule archive | Given the left-hand-side morphism
@@ -1354,13 +1923,33 @@ updateEdgeRelation :: EdgeId -> EdgeId -> TypedGraphMorphism a b -> TypedGraphMo
 --   both nodes already exist.
 updateNodeRelation :: NodeId -> NodeId -> NodeId -> TypedGraphMorphism a b -> TypedGraphMorphism a b
 
--- | Given a <tt>TypedGraphMorphism</tt>, return its orphan nodes
-orphanTypedNodes :: TypedGraphMorphism a b -> [NodeId]
+-- | updates a typed graph morphism, mapping node n1 to node n2. It assumes
+--   both nodes already exist and are of the same type.
+untypedUpdateNodeRelation :: NodeId -> NodeId -> TypedGraphMorphism a b -> TypedGraphMorphism a b
+
+-- | Given a <tt>TypedGraphMorphism</tt>, return its orphan nodes ids
+orphanTypedNodeIds :: TypedGraphMorphism a b -> [NodeId]
+
+-- | Given a <tt>TypedGraphMorphism</tt>, return its orphan edges ids
+orphanTypedEdgeIds :: TypedGraphMorphism a b -> [EdgeId]
 
 -- | Given a <tt>TypedGraphMorphism</tt>, return its orphan edges
-orphanTypedEdges :: TypedGraphMorphism a b -> [EdgeId]
+orphanTypedEdges :: TypedGraphMorphism a b -> [Edge (Maybe b)]
 
-module TypedGraph.GraphRule
+-- | Given a TypedGraphMorphism tgm, creates an isomorphic
+--   TypedGraphMorphism tgm' where the mapping between the domain and
+--   codomain can be seen as explicit inclusion (the same ids) Attention:
+--   It works only when the typing morphism is injective, otherwise it will
+--   produce an invalid TypedGraphMorphism
+reflectIdsFromTypeGraph :: TypedGraphMorphism a b -> TypedGraphMorphism a b
+
+-- | Given a TypedGraphMorphism tgm, creates an isomorphic
+--   TypedGraphMorphism tgm' where the nodes and edges in the domain have
+--   the same ids as the ones in the codomain
+reflectIdsFromCodomain :: TypedGraphMorphism a b -> TypedGraphMorphism a b
+reflectIdsFromDomains :: (TypedGraphMorphism a b, TypedGraphMorphism a b) -> (TypedGraphMorphism a b, TypedGraphMorphism a b)
+
+module TypedGraph.DPO.GraphRule
 type GraphRule a b = Production (TypedGraphMorphism a b)
 
 -- | Returns the morphism <i>K -&gt; L</i> of the given production
@@ -1386,6 +1975,18 @@ createdNodes :: GraphRule a b -> [NodeId]
 
 -- | Return the edges created by a rule
 createdEdges :: GraphRule a b -> [EdgeId]
+preservedNodes :: GraphRule a b -> [NodeId]
+preservedEdges :: GraphRule a b -> [EdgeId]
+
+-- | Returns an empty GraphRule
+emptyGraphRule :: Graph (Maybe a) (Maybe b) -> Production (TypedGraphMorphism a b)
+
+-- | Checks if it is a null rule
+nullGraphRule :: GraphRule a b -> Bool
+
+-- | It builds a GraphRule with lists of deleted, created, preserved and
+--   forbidden elements
+buildGraphRule :: Graph (Maybe a) (Maybe b) -> ListOfNodesAndEdges -> ListOfNodesAndEdges -> ListOfNodesAndEdges -> [ListOfNodesAndEdges] -> Production (TypedGraphMorphism a b)
 
 -- | TODO: Find a better name for this function, that was repeated both
 --   here and in the GraphRule archive | Given the left-hand-side morphism
@@ -1397,11 +1998,28 @@ createdEdges :: GraphRule a b -> [EdgeId]
 --   m), it returns true if <i>e</i> is deleted by this rule for the given
 --   match
 checkDeletion :: Eq t => TypedGraphMorphism a b -> TypedGraphMorphism a b -> (TypedGraphMorphism a b -> t -> Maybe t) -> (TypedGraphMorphism a b -> [t]) -> t -> Bool
-instance Abstract.DPO.DPO (TypedGraph.Morphism.Core.TypedGraphMorphism a b)
+instance Abstract.DPO.Core.DPO (TypedGraph.Morphism.Core.TypedGraphMorphism a b)
+
+module SndOrder.Morphism.NACmanipulation
+
+-- | Auxiliar structure and function to delete first-order NACs
+data DeleteScheme
+DisableDelete :: DeleteScheme
+Monomorphisms :: DeleteScheme
+InitialPushouts :: DeleteScheme
+deleteStep :: DeleteScheme -> [TypedGraphMorphism a b] -> [TypedGraphMorphism a b] -> [TypedGraphMorphism a b]
+verifyIsoBetweenMorphisms :: TypedGraphMorphism a b -> TypedGraphMorphism a b -> Bool
+
+-- | Auxiliar structure and function to create first-order NACs
+data CreateScheme
+DisableCreate :: CreateScheme
+Pushout :: CreateScheme
+ShiftNACs :: CreateScheme
+createStep :: CreateScheme -> TypedGraphMorphism a b -> [TypedGraphMorphism a b] -> [TypedGraphMorphism a b]
 
 module SndOrder.Morphism
 
--- | A morphism between two rules.
+-- | A morphism between two first order rules.
 --   
 --   The following diagram illustrates such a morphism, omiting the NACs.
 --   
@@ -1431,52 +2049,6 @@ ruleMorphism :: Production (TypedGraphMorphism a b) -> Production (TypedGraphMor
 mappingLeft :: RuleMorphism a b -> TypedGraphMorphism a b
 mappingInterface :: RuleMorphism a b -> TypedGraphMorphism a b
 mappingRight :: RuleMorphism a b -> TypedGraphMorphism a b
-
--- | Given the morphisms <i>k1 : X -&gt; Y</i>, <i>s1 : X -&gt; Z</i>,
---   <i>k2 : W -&gt; Y</i> and <i>s2 : W -&gt; Z</i>, respectively, creates
---   the monomorphic morphism <i>x : Y -&gt; Z</i>, where the following
---   diagram commutes:
---   
---   <pre>
---      k1
---   X ───▶Y
---    \   / ▲
---   s1\ /x  \k2
---      ▼     \
---      Z◀──── W
---         s2
---   </pre>
---   
---   TODO: explain the errors in this function. what are preconditions for
---   them not to occur?!?
-commutingMorphismSameDomain :: TypedGraphMorphism a b -> TypedGraphMorphism a b -> TypedGraphMorphism a b -> TypedGraphMorphism a b -> TypedGraphMorphism a b
-
--- | Given the morphisms <i>k1 : Y -&gt; X</i>, <i>s1 : Z -&gt; X</i>,
---   <i>k2 : W -&gt; Y</i> and <i>s2 : W -&gt; Z</i>, respectively, creates
---   the monomorphic morphism <i>a : X -&gt; Y</i>, where the following
---   diagram commutes:
---   
---   <pre>
---       k1
---    X ◀─── Y
---    ▲     / ▲
---   s1\   /x  \k2
---      \ ▼     \
---       Z◀──── W
---          s2
---   </pre>
---   
---   TODO: explain the errors in this function. what are preconditions for
---   them not to occur?!?
-commutingMorphismSameCodomain :: TypedGraphMorphism a b -> TypedGraphMorphism a b -> TypedGraphMorphism a b -> TypedGraphMorphism a b -> TypedGraphMorphism a b
-instance (GHC.Read.Read a, GHC.Read.Read b) => GHC.Read.Read (SndOrder.Morphism.RuleMorphism a b)
-instance GHC.Show.Show (SndOrder.Morphism.RuleMorphism a b)
-instance GHC.Classes.Eq (SndOrder.Morphism.RuleMorphism a b)
-instance Abstract.Valid.Valid (SndOrder.Morphism.RuleMorphism a b)
-instance Abstract.Morphism.Morphism (SndOrder.Morphism.RuleMorphism a b)
-instance Abstract.Morphism.FindMorphism (SndOrder.Morphism.RuleMorphism a b)
-instance Abstract.AdhesiveHLR.EpiPairs (SndOrder.Morphism.RuleMorphism a b)
-instance Abstract.AdhesiveHLR.AdhesiveHLR (SndOrder.Morphism.RuleMorphism a b)
 
 module SndOrder.Rule
 
@@ -1518,15 +2090,17 @@ module SndOrder.Rule
 type SndOrderRule a b = Production (RuleMorphism a b)
 
 -- | Adds the minimal safety nacs needed to this production always produce
---   a second order rule. If the nacs to be added not satisfies the others
---   nacs, then it do not need to be added.
-addMinimalSafetyNacs :: DPOConfig -> SndOrderRule a b -> SndOrderRule a b
-applySndOrderRule :: DPOConfig -> (String, SndOrderRule a b) -> (String, GraphRule a b) -> [(String, GraphRule a b)]
+--   a second order rule. If the nacs that going to be added not satisfies
+--   the others nacs, then it do not need to be added.
+addMinimalSafetyNacs :: MorphismsConfig -> SndOrderRule a b -> SndOrderRule a b
+
+-- | Applies a named second order rule to a named first order rule with all
+--   possible matches, and generates named first order rules as result.
+applySndOrderRule :: MorphismsConfig -> (String, SndOrderRule a b) -> (String, GraphRule a b) -> [(String, GraphRule a b)]
 
 -- | Receives a function that works with a second order and a first order
 --   rule. Apply this function on all possible combinations of rules.
 applySecondOrder :: ((String, SndOrderRule a b) -> (String, GraphRule a b) -> [t]) -> [(String, GraphRule a b)] -> [(String, SndOrderRule a b)] -> [t]
-instance Abstract.DPO.DPO (SndOrder.Morphism.RuleMorphism a b)
 
 
 module Analysis.Interlevel.EvolutionarySpans
@@ -1534,7 +2108,7 @@ module Analysis.Interlevel.EvolutionarySpans
 -- | Given a list of second order rules, calculate all Evolutionary Spans
 --   This analysis is supposed to be symmetric, here is considering only
 --   this case
-allEvolSpans :: DPOConfig -> [(String, SndOrderRule a b)] -> [(String, [EvoSpan a b])]
+allEvolSpans :: MorphismsConfig -> [(String, SndOrderRule a b)] -> [(String, String, [EvoSpan a b])]
 
 -- | Represents the two evolutionary matches, and the kind of span
 data EvoSpan a b
@@ -1543,60 +2117,118 @@ rightMatch :: EvoSpan a b -> RuleMorphism a b
 cpe :: EvoSpan a b -> CPE
 instance GHC.Show.Show (Analysis.Interlevel.EvolutionarySpans.EvoSpan a b)
 instance GHC.Classes.Eq (Analysis.Interlevel.EvolutionarySpans.EvoSpan a b)
-instance GHC.Show.Show Analysis.Interlevel.EvolutionarySpans.CPE
-instance GHC.Classes.Eq Analysis.Interlevel.EvolutionarySpans.CPE
+
+module Image.Dot
+data NamingContext
+Ctx :: (NodeId -> String) -> (EdgeId -> String) -> NamingContext
+[getNodeTypeName] :: NamingContext -> NodeId -> String
+[getEdgeTypeName] :: NamingContext -> EdgeId -> String
+makeNamingContext :: [(String, String)] -> NamingContext
+printDotGraph :: String -> String -> [String] -> [Doc] -> [Doc] -> [Doc] -> Doc
+printDigraph :: String -> [String] -> [Doc] -> [Doc] -> [Doc] -> Doc
+printSubgraph :: String -> [String] -> [Doc] -> [Doc] -> [Doc] -> Doc
+
+-- | Create a dotfile representation of the given state space, labeling
+--   states with their IDs
+printStateSpace :: StateSpace (TypedGraphMorphism a b) -> Doc
+
+-- | Create a dotfile representation of the given typed graph, labeling
+--   nodes with their types
+printTypedGraph :: NamingContext -> String -> TypedGraph a b -> Doc
+printSubTypedGraph :: NamingContext -> String -> TypedGraph a b -> Doc
+
+-- | Create a dotfile representation of the given typed graph morphism
+printTypedGraphMorphism :: NamingContext -> String -> TypedGraphMorphism a b -> Doc
+
+-- | Create a dotfile representation of the given graph rule
+printGraphRule :: NamingContext -> String -> GraphRule a b -> Doc
+printSubGraphRule :: NamingContext -> String -> GraphRule a b -> Doc
+
+-- | Create a dotfile representation of the given snd order rule
+printSndOrderRule :: NamingContext -> String -> SndOrderRule a b -> Doc
+printNode :: Doc -> [Doc] -> Doc
+printEdge :: Doc -> Doc -> [Doc] -> Doc
+nodeSubId :: String -> NodeId -> Doc
+nodeId :: NodeId -> Doc
+edgeSubId :: String -> EdgeId -> Doc
+edgeId :: EdgeId -> Doc
+
+module TypedGraph.DPO.GraphProcess
+data DoublyTypedGrammar a b
+DoublyTypedGrammar :: Grammar (TypedGraphMorphism a b) -> [NamedRuleWithMatches (TypedGraphMorphism a b)] -> TypedGraph a b -> Relation -> Relation -> AbstractRelation -> DoublyTypedGrammar a b
+
+-- | The grammar typed over the double type graph
+[singleTypedGrammar] :: DoublyTypedGrammar a b -> Grammar (TypedGraphMorphism a b)
+
+-- | The rules of the original grammar, together with their matches in the
+--   double type graph
+[originalRulesWithMatches] :: DoublyTypedGrammar a b -> [NamedRuleWithMatches (TypedGraphMorphism a b)]
+
+-- | The double type graph, typed over the simple type graph
+[doubleType] :: DoublyTypedGrammar a b -> TypedGraph a b
+
+-- | The relation that shows the rule that originated each element (node or
+--   edge) in the grammar
+[originRelation] :: DoublyTypedGrammar a b -> Relation
+
+-- | The occurrence relation of the grammar (existencial relation +
+--   concrete conflicts and dependencies induced by NACs)
+[concreteRelation] :: DoublyTypedGrammar a b -> Relation
+
+-- | The set of restrictions given by the abstract conflicts and
+--   dependencies
+[restrictRelation] :: DoublyTypedGrammar a b -> AbstractRelation
+occurrenceRelation :: [NamedProduction (TypedGraphMorphism a b)] -> Relation
+
+-- | Given a rule sequence, it calculates its underlying doubly-typed graph
+--   grammar
+generateDoublyTypedGrammar :: RuleSequence (TypedGraphMorphism a b) -> DoublyTypedGrammar a b
+uniqueOrigin :: [NamedProduction (TypedGraphMorphism a b)] -> Bool
+
+-- | Given an doubly typed grammar and an interaction of the types
+--   ProduceForbid or DeleteForbid between two rules it returns the
+--   interaction together with the element that triggered the NAC involved
+--   in this conflict or dependency
+findConcreteTrigger :: DoublyTypedGrammar a b -> Interaction -> (Interaction, RelationItem)
+calculateNacRelations :: DoublyTypedGrammar a b -> Set Interaction -> DoublyTypedGrammar a b
+strictRelation :: [NamedProduction (TypedGraphMorphism a b)] -> Relation
+creationAndDeletionRelation :: NamedProduction (TypedGraphMorphism a b) -> Relation
+
+-- | Given an doubly typed grammar, it returns a tuple <tt>(rs,es)</tt>
+--   where <tt>rs</tt> is the set of rule names in this grammar and
+--   <tt>es</tt> is the set of elements that appear in the rules
+getElements :: DoublyTypedGrammar a b -> (Set RelationItem, Set RelationItem)
+
+-- | Given an doubly typed grammar, it returns its initial graph
+initialGraph :: DoublyTypedGrammar a b -> TypedGraph a b
+
+-- | Given an doubly typed grammar, it returns its final graph
+finalGraph :: DoublyTypedGrammar a b -> TypedGraph a b
+
+-- | Checks whether the restrict relation of an doubly typed grammar is
+--   empty
+emptyRestrictions :: DoublyTypedGrammar a b -> Bool
+instance Abstract.DPO.Process.GenerateProcess (TypedGraph.Morphism.Core.TypedGraphMorphism a b)
 
 
 module Analysis.Interlevel.InterLevelCP
 
 -- | Matches the second order rule with the first order, and calls theirs
 --   critical pairs
-interLevelCP :: DPOConfig -> (String, SndOrderRule a b) -> (String, GraphRule a b) -> [(String, String, Int, InterLevelCP a b)]
+interLevelCP :: MorphismsConfig -> (String, SndOrderRule a b) -> (String, GraphRule a b) -> [(String, String, Int, InterLevelCP a b)]
 data InterLevelCP a b
 InterLevelCP :: RuleMorphism a b -> TypedGraphMorphism a b -> InterLevelCP a b
 [sndOrderMatch] :: InterLevelCP a b -> RuleMorphism a b
 [fstOrderMatch] :: InterLevelCP a b -> TypedGraphMorphism a b
+danglingExtension :: TypedGraphMorphism a b -> TypedGraphMorphism a b
 instance GHC.Show.Show (Analysis.Interlevel.InterLevelCP.InterLevelCP a b)
 instance GHC.Classes.Eq (Analysis.Interlevel.InterLevelCP.InterLevelCP a b)
-
-module TypedGraph.GraphGrammar
-graphGrammar :: GraphMorphism a b -> [AtomicConstraint (TypedGraphMorphism a b)] -> [(String, GraphRule a b)] -> [(String, SndOrderRule a b)] -> GraphGrammar a b
-data GraphGrammar a b
-initialGraph :: GraphGrammar a b -> GraphMorphism a b
-constraints :: GraphGrammar a b -> [AtomicConstraint (TypedGraphMorphism a b)]
-rules :: GraphGrammar a b -> [(String, GraphRule a b)]
-sndOrderRules :: GraphGrammar a b -> [(String, SndOrderRule a b)]
-typeGraph :: GraphGrammar a b -> Graph a b
-instance GHC.Show.Show (TypedGraph.GraphGrammar.GraphGrammar a b)
-
-module XML.GGXWriter
-
--- | Writes grammar, conflicts and dependencies (.cpx)
-writeConfDepFile :: DPOConfig -> GraphGrammar a b -> String -> [(String, String)] -> String -> IO ()
-
--- | Writes the grammar and the conflicts (.cpx)
-writeConflictsFile :: DPOConfig -> GraphGrammar a b -> String -> [(String, String)] -> String -> IO ()
-
--- | Writes the grammar and the dependencies (.cpx)
-writeDependenciesFile :: DPOConfig -> GraphGrammar a b -> String -> [(String, String)] -> String -> IO ()
-
--- | Writes grammar, second order conflicts and dependencies (.ggx)
-writeSndOderConfDepFile :: DPOConfig -> GraphGrammar a b -> String -> [(String, String)] -> String -> IO ()
-
--- | Writes the grammar and the second order conflicts (.ggx)
-writeSndOderConflictsFile :: DPOConfig -> GraphGrammar a b -> String -> [(String, String)] -> String -> IO ()
-
--- | Writes the grammar and the second order dependencies (.ggx)
-writeSndOderDependenciesFile :: DPOConfig -> GraphGrammar a b -> String -> [(String, String)] -> String -> IO ()
-
--- | Writes only the grammar (.ggx)
-writeGrammarFile :: GraphGrammar a b -> String -> [(String, String)] -> String -> IO ()
 
 module XML.GGXReader
 
 -- | Reads the grammar in the XML, adds the needed minimal safety nacs to
 --   second order, and returns the grammar and a log
-readGrammar :: String -> Bool -> DPOConfig -> IO (GraphGrammar a b, [(String, Int)])
+readGrammar :: String -> Bool -> MorphismsConfig -> IO (Grammar (TypedGraphMorphism a b), Grammar (RuleMorphism a b), [(String, Int)])
 readGGName :: String -> IO String
 readName :: String -> IO [String]
 
@@ -1610,25 +2242,33 @@ readNames :: String -> IO [(String, String)]
 readTypeGraph :: String -> IO [ParsedTypeGraph]
 readRules :: String -> IO [RuleWithNacs]
 readGraphs :: String -> IO [(String, TypedGraph a b)]
-readSequences :: GraphGrammar a b -> String -> IO [(String, [GraphRule a b])]
+readSequences :: Grammar (TypedGraphMorphism a b) -> String -> IO [(String, [GraphRule a b])]
+readSequencesWithObjectFlow :: Grammar (TypedGraphMorphism a b) -> String -> IO [(String, [(String, GraphRule a b)], [ObjectFlow (TypedGraphMorphism a b)])]
 instantiateRule :: TypeGraph a b -> RuleWithNacs -> GraphRule a b
 instantiateSpan :: TypedGraph a b -> TypedGraph a b -> [Mapping] -> (TypedGraphMorphism a b, TypedGraphMorphism a b)
-minimalSafetyNacsWithLog :: DPOConfig -> GraphGrammar a b -> (GraphGrammar a b, [(String, Int)])
-printMinimalSafetyNacsLog :: DPOConfig -> [(String, Int)] -> [String]
+minimalSafetyNacsWithLog :: MorphismsConfig -> Grammar (RuleMorphism a b) -> (Grammar (RuleMorphism a b), [(String, Int)])
+printMinimalSafetyNacsLog :: [(String, Int)] -> [String]
 
-module Dot
-data NamingContext
-Ctx :: (NodeId -> String) -> (EdgeId -> String) -> NamingContext
-[getNodeTypeName] :: NamingContext -> NodeId -> String
-[getEdgeTypeName] :: NamingContext -> EdgeId -> String
-printDigraph :: String -> [String] -> [Doc] -> [Doc] -> Doc
+module XML.GGXWriter
+type Grammars a b = (Grammar (TypedGraphMorphism a b), Grammar (RuleMorphism a b))
 
--- | Create a dotfile representation of the given state space, labeling
---   states with their IDs
-printStateSpace :: StateSpace (TypedGraphMorphism a b) -> Doc
+-- | Writes grammar, conflicts and dependencies (.cpx)
+writeConfDepFile :: Bool -> MorphismsConfig -> Grammars a b -> String -> [(String, String)] -> String -> IO ()
 
--- | Create a dotfile representation of the given typed graph, labeling
---   nodes with their types
-printTypedGraph :: NamingContext -> String -> TypedGraph a b -> Doc
-nodeId :: NodeId -> Doc
-edgeId :: EdgeId -> Doc
+-- | Writes the grammar and the conflicts (.cpx)
+writeConflictsFile :: Bool -> MorphismsConfig -> Grammars a b -> String -> [(String, String)] -> String -> IO ()
+
+-- | Writes the grammar and the dependencies (.cpx)
+writeDependenciesFile :: MorphismsConfig -> Grammars a b -> String -> [(String, String)] -> String -> IO ()
+
+-- | Writes grammar, second order conflicts and dependencies (.ggx)
+writeSndOderConfDepFile :: MorphismsConfig -> Grammars a b -> String -> [(String, String)] -> String -> IO ()
+
+-- | Writes the grammar and the second order conflicts (.ggx)
+writeSndOderConflictsFile :: MorphismsConfig -> Grammars a b -> String -> [(String, String)] -> String -> IO ()
+
+-- | Writes the grammar and the second order dependencies (.ggx)
+writeSndOderDependenciesFile :: MorphismsConfig -> Grammars a b -> String -> [(String, String)] -> String -> IO ()
+
+-- | Writes only the grammar (.ggx)
+writeGrammarFile :: Grammars a b -> String -> [(String, String)] -> String -> IO ()

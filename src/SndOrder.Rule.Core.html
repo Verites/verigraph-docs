@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">SndOrder</span><span class="hs-operator">.</span><span class="hs-identifier">Rule</span><span class="hs-operator">.</span><span class="hs-identifier">Core</span><span> </span><span class="hs-keyword">where</span><span>
+</span><a name="line-2"></a><span>
+</span><a name="line-3"></a><span class="hs-keyword">import</span><span>           </span><a href="Abstract.DPO.html"><span class="hs-identifier">Abstract</span><span class="hs-operator">.</span><span class="hs-identifier">DPO</span></a><span>
+</span><a name="line-4"></a><span class="hs-keyword">import</span><span>           </span><a href="SndOrder.Morphism.html"><span class="hs-identifier">SndOrder</span><span class="hs-operator">.</span><span class="hs-identifier">Morphism</span></a><span> </span><span class="hs-keyword">as</span><span> </span><span class="hs-identifier">SO</span><span>
+</span><a name="line-5"></a><span>
+</span><a name="line-6"></a><span class="hs-comment">-- | A second order rule:</span><span>
+</span><a name="line-7"></a><span class="hs-comment">--</span><span>
+</span><a name="line-8"></a><span class="hs-comment">-- @</span><span>
+</span><a name="line-9"></a><span class="hs-comment">--         nl       nr</span><span>
+</span><a name="line-10"></a><span class="hs-comment">--     NL&#9664;&#9472;&#9472;&#9472;&#9472;&#9472;\&lt;NK\&gt;&#9472;&#9472;&#9472;&#9472;&#9472;&#9654;NR</span><span>
+</span><a name="line-11"></a><span class="hs-comment">--      &#9650;        &#9650;        &#9650;</span><span>
+</span><a name="line-12"></a><span class="hs-comment">--   nacL\\    nacK\\    nacR\\
+--        \\        \\        \\
+--         \\   ll   \\   lr   \\
+--         LL&#9664;&#9472;&#9472;&#9472;&#9472;&#9472;\&lt;LK\&gt;&#9472;&#9472;&#9472;&#9472;&#9472;&#9654;LR</span><span>
+</span><a name="line-16"></a><span class="hs-comment">--         &#9650;        &#9650;        &#9650;</span><span>
+</span><a name="line-17"></a><span class="hs-comment">--    leftL&#9474;   leftK&#9474;   leftR&#9474;</span><span>
+</span><a name="line-18"></a><span class="hs-comment">--         &#9474;        &#9474;        &#9474;</span><span>
+</span><a name="line-19"></a><span class="hs-comment">--         &#9474;    kl  &#9474;    kr  &#9474;</span><span>
+</span><a name="line-20"></a><span class="hs-comment">--         KL&#9664;&#9472;&#9472;&#9472;&#9472;&#9472;\&lt;KK\&gt;&#9472;&#9472;&#9472;&#9472;&#9472;&#9654;KR</span><span>
+</span><a name="line-21"></a><span class="hs-comment">--         &#9474;        &#9474;        &#9474;</span><span>
+</span><a name="line-22"></a><span class="hs-comment">--   rightL&#9474;  rightK&#9474;  rightR&#9474;</span><span>
+</span><a name="line-23"></a><span class="hs-comment">--         &#9474;        &#9474;        &#9474;</span><span>
+</span><a name="line-24"></a><span class="hs-comment">--         &#9660;    rl  &#9660;    rr  &#9660;</span><span>
+</span><a name="line-25"></a><span class="hs-comment">--         RL&#9664;&#9472;&#9472;&#9472;&#9472;&#9472;\&lt;RK\&gt;&#9472;&#9472;&#9472;&#9472;&#9472;&#9654;RR</span><span>
+</span><a name="line-26"></a><span class="hs-comment">-- @</span><span>
+</span><a name="line-27"></a><span class="hs-comment">--</span><span>
+</span><a name="line-28"></a><span class="hs-comment">-- domain rule = (ll,lr)</span><span>
+</span><a name="line-29"></a><span class="hs-comment">--</span><span>
+</span><a name="line-30"></a><span class="hs-comment">-- interface rule = (kl,kr)</span><span>
+</span><a name="line-31"></a><span class="hs-comment">--</span><span>
+</span><a name="line-32"></a><span class="hs-comment">-- codomain rule (rl,rr)</span><span>
+</span><a name="line-33"></a><span class="hs-comment">--</span><span>
+</span><a name="line-34"></a><span class="hs-comment">-- nac rule = (nl,nr)</span><span>
+</span><a name="line-35"></a><span class="hs-comment">--</span><span>
+</span><a name="line-36"></a><span class="hs-comment">-- nacs = set of: domain rule, nac rule, nacL, nacK, nacR</span><span>
+</span><a name="line-37"></a><span class="hs-comment">--</span><span>
+</span><a name="line-38"></a><span class="hs-comment">-- left = domain rule, interface rule, leftL, leftK, leftR</span><span>
+</span><a name="line-39"></a><span class="hs-comment">--</span><span>
+</span><a name="line-40"></a><span class="hs-comment">-- right = interface rule, codomain rule, rightL, rightK, rightR</span><span>
+</span><a name="line-41"></a><span class="hs-keyword">type</span><span> </span><a name="SndOrderRule"><a href="SndOrder.Rule.Core.html#SndOrderRule"><span class="hs-identifier">SndOrderRule</span></a></a><span> </span><a name="local-6989586621679114082"><a href="#local-6989586621679114082"><span class="hs-identifier">a</span></a></a><span> </span><a name="local-6989586621679114083"><a href="#local-6989586621679114083"><span class="hs-identifier">b</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a href="Abstract.DPO.Core.html#Production"><span class="hs-identifier hs-type">Production</span></a><span> </span><span class="hs-special">(</span><a href="SndOrder.Morphism.Core.html#RuleMorphism"><span class="hs-identifier hs-type">RuleMorphism</span></a><span> </span><a href="#local-6989586621679114082"><span class="hs-identifier hs-type">a</span></a><span> </span><a href="#local-6989586621679114083"><span class="hs-identifier hs-type">b</span></a><span class="hs-special">)</span><span>
+</span><a name="line-42"></a></pre></body></html>
