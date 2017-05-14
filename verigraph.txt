@@ -6,7 +6,7 @@
 --   
 --   Software specification and verification tool based on graph rewriting.
 @package verigraph
-@version 1.1.0
+@version 1.1.1
 
 
 module Logic.Model
@@ -623,9 +623,9 @@ insertEdgeWithPayload :: EdgeId -> NodeId -> NodeId -> e -> Graph n e -> Graph n
 --   edges. <i>O(v + e²)</i>.
 removeNode :: NodeId -> Graph n e -> Graph n e
 
--- | Removes the given node from the graph, unless it has any incident
---   edges. <i>O(v + e²)</i>. It does not verify if the node has incident
---   edges, thus it may generate invalid graphs.
+-- | Removes the given node from the graph, even if it has any incident
+--   edges. It does not verify if the node has incident edges, thus it may
+--   generate invalid graphs.
 removeNodeForced :: NodeId -> Graph n e -> Graph n e
 
 -- | Removes the given node and all incident edges from the graph. <i>O(v +
